@@ -1,4 +1,4 @@
-package org.mbds.tpt.maslow.ws;
+package org.mbds.tpt.maslow.resources;
 
 
 import org.springframework.boot.SpringApplication;
