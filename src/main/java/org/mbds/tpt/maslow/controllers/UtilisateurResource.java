@@ -1,4 +1,4 @@
-package org.mbds.tpt.maslow.resources;
+package org.mbds.tpt.maslow.controllers;
 
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
