@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 /**
  * Created by Gael on 17/02/2016.
@@ -79,7 +80,7 @@ public class Utilisateur {
             System.out.println("MD5 n'est pas présent sur le système");
         }
 
-        this.password = hashedPassword.toString();
+        this.password = Arrays.toString(hashedPassword);
     }
 
     @Override
