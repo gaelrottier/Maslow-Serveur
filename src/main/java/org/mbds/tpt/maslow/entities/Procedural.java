@@ -3,14 +3,13 @@ package org.mbds.tpt.maslow.entities;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Gael on 17/02/2016.
  */
 @Entity
-public class Procedural implements Serializable {
+public class Procedural {
 
     //Id recu via la lampe, l'activité, ou le tag NFC
     @EmbeddedId
@@ -21,6 +20,18 @@ public class Procedural implements Serializable {
     List<Operation> operations;
 
     public Procedural() {
+    }
+
+    public Procedural(ProceduralPK idProcedure) {
+        this.idProcedure = idProcedure;
+    }
+
+    public ProceduralPK getIdProcedure() {
+        return idProcedure;
+    }
+
+    public void setIdProcedure(ProceduralPK idProcedure) {
+        this.idProcedure = idProcedure;
     }
 
     public List<Operation> getOperations() {

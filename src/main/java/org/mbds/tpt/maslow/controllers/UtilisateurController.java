@@ -1,36 +1,38 @@
 package org.mbds.tpt.maslow.controllers;
 
+import org.json.JSONObject;
 import org.mbds.tpt.maslow.dao.UtilisateurDao;
 import org.mbds.tpt.maslow.entities.Utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by Gael on 22/02/2016.
  */
-@Controller
+@RestController
+@RequestMapping("/u")
 public class UtilisateurController {
 
     @Autowired
     private UtilisateurDao utilisateurDao;
 
-    @RequestMapping("/create")
-    public String create(String nom, String prenom) {
-        String id = "";
+    @RequestMapping(value = "/", method = RequestMethod.POST)
+    public ResponseEntity<String> createUtilisateur(@RequestBody Utilisateur utilisateur, HttpServletRequest request) {
+        JSONObject json = new JSONObject();
 
-        try {
-            Utilisateur utilisateur = new Utilisateur();
-            utilisateur.setNom(nom);
-            utilisateur.setPrenom(prenom);
-            utilisateur.setIdentifiant("");
-            utilisateur.setPassword("");
-            utilisateurDao.save(utilisateur);
-            id = String.valueOf(utilisateur.getId());
-        } catch (Exception e) {
-            return "user not found";
-        }
+        //Si l'utilisateur ne se crée pas, un HTTP 500 est levé
+        Utilisateur createdUtilisateur = utilisateurDao.save(utilisateur);
 
-        return "user created successfully, id : " + id;
+        json.put("href", request.getRequestURL().append(createdUtilisateur.getId()));
+        json.put("resource", createdUtilisateur);
+
+        return new ResponseEntity<>(json.toString(), HttpStatus.CREATED);
     }
 }
