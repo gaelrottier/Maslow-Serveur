@@ -15,9 +15,9 @@ public class Operation implements Serializable {
 
     String idOrchestra;
 
-    @MapsId("idProcedure")
-    @JoinColumns({
-            @JoinColumn(name = "idProcedure_fk", referencedColumnName = "idProcedure"),
+    @MapsId("idProcedural")
+    @JoinColumns(value = {
+            @JoinColumn(name = "idProcedural_fk", referencedColumnName = "idProcedural"),
             @JoinColumn(name = "idUtilisateur_fk", referencedColumnName = "idUtilisateur")
     })
     @ManyToOne

@@ -8,23 +8,23 @@ import java.io.Serializable;
  */
 @Embeddable
 public class ProceduralPK implements Serializable {
-    private int idProcedure;
+    private int idProcedural;
     private int idUtilisateur;
 
     public ProceduralPK() {
     }
 
-    public ProceduralPK(int idProcedure, int idUtilisateur) {
-        this.idProcedure = idProcedure;
+    public ProceduralPK(int idProcedural, int idUtilisateur) {
+        this.idProcedural = idProcedural;
         this.idUtilisateur = idUtilisateur;
     }
 
-    public int getIdProcedure() {
-        return idProcedure;
+    public int getIdProcedural() {
+        return idProcedural;
     }
 
-    public void setIdProcedure(int idProcedure) {
-        this.idProcedure = idProcedure;
+    public void setIdProcedural(int idProcedure) {
+        this.idProcedural = idProcedure;
     }
 
     public int getIdUtilisateur() {
@@ -37,14 +37,14 @@ public class ProceduralPK implements Serializable {
 
     @Override
     public int hashCode() {
-        return idProcedure + idUtilisateur;
+        return idProcedural + idUtilisateur;
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ProceduralPK) {
             ProceduralPK ppk = (ProceduralPK) obj;
-            return ppk.idUtilisateur == this.idUtilisateur && ppk.idProcedure == idProcedure;
+            return ppk.idUtilisateur == this.idUtilisateur && ppk.idProcedural == idProcedural;
         }
 
         return false;

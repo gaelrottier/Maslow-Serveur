@@ -13,7 +13,7 @@ public class Procedural {
 
     //Id recu via la lampe, l'activité, ou le tag NFC
     @EmbeddedId
-    ProceduralPK idProcedure;
+    ProceduralPK idProcedural;
 
     //A exécution immédiate par l'application
     @OneToMany(mappedBy = "procedural")
@@ -22,16 +22,16 @@ public class Procedural {
     public Procedural() {
     }
 
-    public Procedural(ProceduralPK idProcedure) {
-        this.idProcedure = idProcedure;
+    public Procedural(ProceduralPK idProcedural) {
+        this.idProcedural = idProcedural;
     }
 
-    public ProceduralPK getIdProcedure() {
-        return idProcedure;
+    public ProceduralPK getIdProcedural() {
+        return idProcedural;
     }
 
-    public void setIdProcedure(ProceduralPK idProcedure) {
-        this.idProcedure = idProcedure;
+    public void setIdProcedural(ProceduralPK idProcedure) {
+        this.idProcedural = idProcedure;
     }
 
     public List<Operation> getOperations() {
