@@ -7,10 +7,7 @@ import org.mbds.tpt.maslow.entities.ProceduralPK;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +16,7 @@ import java.util.List;
  * Created by Gael on 17/02/2016.
  */
 @RestController
-@RequestMapping("/u/{id}/p")
+@RequestMapping("/u/{idUtilisateur}/p")
 public class ProceduralController {
 
     @Autowired
@@ -31,9 +28,14 @@ public class ProceduralController {
         return null;
     }
 
+    @RequestMapping(value = "/{idProcedural}", method = RequestMethod.GET)
+    public ResponseEntity<String> readProcedure(@PathVariable int idUtilisateur, @PathVariable int idProcedural) {
+        return new ResponseEntity<>(proceduralDao.findOne(new ProceduralPK(idUtilisateur, idProcedural)).toString(), HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ResponseEntity<Procedural> create() {
-        ProceduralPK pk = new ProceduralPK(1, 21);
+        ProceduralPK pk = new ProceduralPK(1, 2);
         Procedural p = new Procedural(pk);
         List<Operation> operations = new ArrayList<>();
         operations.add(new Operation());

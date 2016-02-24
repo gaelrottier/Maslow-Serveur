@@ -23,8 +23,8 @@ public class Operation implements Serializable {
     @ManyToOne
     Procedural procedural;
 
-    //les paramètres à envoyer avec l'id
-    String paramètres;
+    //les parametres à envoyer avec l'id
+    String parametres;
 
     public Operation() {
     }
@@ -53,11 +53,11 @@ public class Operation implements Serializable {
         this.procedural = procedural;
     }
 
-    public String getParamètres() {
-        return paramètres;
+    public String getParametres() {
+        return parametres;
     }
 
-    public void setParamètres(String paramètres) {
-        this.paramètres = paramètres;
+    public void setParametres(String parametres) {
+        this.parametres = parametres;
     }
 }

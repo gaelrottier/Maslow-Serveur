@@ -41,4 +41,29 @@ public class Procedural {
     public void setOperations(List<Operation> operations) {
         this.operations = operations;
     }
+
+
+    @Override
+    public String toString() {
+        String proceduralToString = "{'idProcedural': " +
+                "{'idProcedural': " + idProcedural.getIdProcedural() + "," +
+                "'idUtilisateur': " + idProcedural.getIdUtilisateur() + "" +
+                "}," +
+                "'operations': [";
+        for (int i = 0; i <= operations.size() - 1; i++) {
+            Operation o = operations.get(i);
+
+            proceduralToString += "" +
+                    "{'id': " + o.getId() + "," +
+                    "'idOrchestra': '" + o.getIdOrchestra() + "'," +
+                    "'parametres': " + o.getParametres() + "}";
+            if (i != operations.size() - 1) {
+                proceduralToString += ",";
+            }
+        }
+
+        proceduralToString += "]}";
+
+        return proceduralToString;
+    }
 }

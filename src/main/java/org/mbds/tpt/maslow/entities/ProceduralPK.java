@@ -14,7 +14,7 @@ public class ProceduralPK implements Serializable {
     public ProceduralPK() {
     }
 
-    public ProceduralPK(int idProcedural, int idUtilisateur) {
+    public ProceduralPK(int idUtilisateur, int idProcedural) {
         this.idProcedural = idProcedural;
         this.idUtilisateur = idUtilisateur;
     }

@@ -1,6 +1,9 @@
 package org.mbds.tpt.maslow.entities;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
@@ -14,9 +17,9 @@ public class Evenement implements Serializable {
     int id;
 
     String idOrchestra;
-
-    @ManyToOne
-    Appareil appareil;
+//
+//    @ManyToOne
+//    Appareil appareil;
 
     //Permet de faire la correspondance entre
     // le nom du paramètre envoyé par orchestra et
@@ -41,14 +44,14 @@ public class Evenement implements Serializable {
     public void setIdOrchestra(String idOrchestra) {
         this.idOrchestra = idOrchestra;
     }
-
-    public Appareil getAppareil() {
-        return appareil;
-    }
-
-    public void setAppareil(Appareil appareil) {
-        this.appareil = appareil;
-    }
+//
+//    public Appareil getAppareil() {
+//        return appareil;
+//    }
+//
+//    public void setAppareil(Appareil appareil) {
+//        this.appareil = appareil;
+//    }
 
     public String getAlias() {
         return alias;

@@ -17,11 +17,11 @@ public class Appareil implements Serializable {
     //Nom affiché par l'appli
     String nom;
 
-    @OneToMany(mappedBy = "appareil")
+    @OneToMany()
     List<Evenement> evenements;
 
-    @ManyToOne
-    WatchList watchlist;
+//    @ManyToOne
+//    WatchList watchlist;
 
     public Appareil() {
     }
@@ -49,12 +49,12 @@ public class Appareil implements Serializable {
     public void setEvenements(List<Evenement> evenements) {
         this.evenements = evenements;
     }
-
-    public WatchList getWatchlist() {
-        return watchlist;
-    }
-
-    public void setWatchlist(WatchList watchlist) {
-        this.watchlist = watchlist;
-    }
+//
+//    public WatchList getWatchlist() {
+//        return watchlist;
+//    }
+//
+//    public void setWatchlist(WatchList watchlist) {
+//        this.watchlist = watchlist;
+//    }
 }

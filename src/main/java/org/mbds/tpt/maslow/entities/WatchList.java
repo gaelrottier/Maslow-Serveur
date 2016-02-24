@@ -16,7 +16,7 @@ public class WatchList implements Serializable {
     int id;
 
     //Les appareils à surveiller par l'appli
-    @OneToMany(mappedBy = "watchlist")
+    @OneToMany()
     List<Appareil> appareils;
 
     public WatchList() {

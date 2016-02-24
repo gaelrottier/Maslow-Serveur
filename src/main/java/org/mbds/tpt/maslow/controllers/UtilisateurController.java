@@ -26,7 +26,6 @@ public class UtilisateurController {
 
             return new ResponseEntity<>(utilisateurDao.save(utilisateur).toString(), HttpStatus.CREATED);
         } catch (ConstraintViolationException e) {
-            e.printStackTrace();
             return new ResponseEntity<>("Les paramètres ne sont pas bons.", HttpStatus.BAD_REQUEST);
         }
     }
@@ -65,7 +64,6 @@ public class UtilisateurController {
             }
 
         } catch (NullPointerException e) {
-            e.printStackTrace();
             return new ResponseEntity<>("L'utilisateur demandé n'existe pas.", HttpStatus.NOT_FOUND);
         } catch (IllegalAccessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
