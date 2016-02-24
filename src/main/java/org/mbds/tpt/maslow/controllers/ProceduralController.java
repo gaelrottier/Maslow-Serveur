@@ -19,7 +19,7 @@ import java.util.List;
  * Created by Gael on 17/02/2016.
  */
 @RestController
-@RequestMapping("/p")
+@RequestMapping("/u/{id}/p")
 public class ProceduralController {
 
     @Autowired

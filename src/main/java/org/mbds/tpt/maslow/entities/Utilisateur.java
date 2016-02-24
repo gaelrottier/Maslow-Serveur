@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
+import java.util.UUID;
 
 /**
  * Created by Gael on 17/02/2016.
@@ -31,7 +31,13 @@ public class Utilisateur {
     @NotNull
     private String password;
 
+    private String token;
+
     public Utilisateur() {
+    }
+
+    public void generateToken() {
+        token = UUID.randomUUID().toString();
     }
 
     public int getId() {
@@ -76,19 +82,21 @@ public class Utilisateur {
         try {
             hashedPassword = MessageDigest.getInstance("md5").digest(password.getBytes());
         } catch (NoSuchAlgorithmException ex) {
-            // Not likely to happen
+            // Unlikely to happen
             System.out.println("MD5 n'est pas présent sur le système");
         }
 
-        this.password = Arrays.toString(hashedPassword);
+        this.password = new String(hashedPassword);
     }
 
     @Override
     public String toString() {
         return "{" +
-                "'nom': '" + getNom() + "'," +
-                "'prenom': '" + getPrenom() + "'," +
-                "'identifiant': '" + getIdentifiant() + "'" +
+                "'id' : " + id + "," +
+                "'nom': '" + nom + "'," +
+                "'prenom': '" + prenom + "'," +
+                "'identifiant': '" + identifiant + "'," +
+                "'token': '" + token + "'" +
                 "}";
     }
 }
