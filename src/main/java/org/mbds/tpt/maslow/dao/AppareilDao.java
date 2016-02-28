@@ -10,6 +10,6 @@ import javax.transaction.Transactional;
  */
 @Transactional
 @org.springframework.stereotype.Repository
-public interface AppareilDao extends CrudRepository<Appareil, Long> {
+public interface AppareilDao extends CrudRepository<Appareil, Integer> {
 
 }

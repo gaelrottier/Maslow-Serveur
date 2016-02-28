@@ -1,9 +1,7 @@
 package org.mbds.tpt.maslow.controllers;
 
 import org.mbds.tpt.maslow.dao.*;
-import org.mbds.tpt.maslow.entities.Operation;
-import org.mbds.tpt.maslow.entities.Procedural;
-import org.mbds.tpt.maslow.entities.ProceduralPK;
+import org.mbds.tpt.maslow.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +34,35 @@ public class WatchListController {
 
     @Autowired
     OperationDao operationDao;
+
+
+    //AJOUT LISTE APPAREILS DANS UNE WATCHLIST
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<?> addListAppareilToWatchList(@PathVariable int id, @RequestBody List<Integer> idAppareils){
+        WatchList watchList = watchListDao.findOne(id);
+        Appareil appareil = new Appareil();
+        List<Appareil> appareilList = new ArrayList<>();
+        if (watchList != null){
+            for (Integer i: idAppareils){
+                appareil = appareilDao.findOne(i);
+                if (appareil != null){
+                    appareilList.add(appareil);
+                }
+            }
+            watchList.setAppareils(appareilList);
+            watchListDao.save(watchList);
+            return new ResponseEntity<>(watchList, HttpStatus.OK);
+        }
+        return new ResponseEntity<Object>("ERREUR : LA WATCHLIST "+id+" N'EXISTE PAS", HttpStatus.BAD_REQUEST);
+    }
+
+    //CREATION WATCHLIST
+    @RequestMapping(value = "/", method = RequestMethod.POST)
+    public ResponseEntity<WatchList> newWatchList(){
+
+            return new ResponseEntity<>( watchListDao.save(new WatchList()), HttpStatus.OK);
+
+    }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ResponseEntity<?> readWatchList() {
@@ -113,6 +140,7 @@ public class WatchListController {
 
         return new ResponseEntity<>(p.toString(), HttpStatus.CREATED);
     }
+
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> readWatchList(@PathVariable int id, @RequestParam String token) {

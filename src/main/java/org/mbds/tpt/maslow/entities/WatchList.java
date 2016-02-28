@@ -1,8 +1,6 @@
 package org.mbds.tpt.maslow.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
@@ -13,6 +11,7 @@ import java.util.List;
 public class WatchList implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     int id;
 
     //Les appareils à surveiller par l'appli

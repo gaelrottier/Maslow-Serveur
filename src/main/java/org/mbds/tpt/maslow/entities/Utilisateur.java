@@ -35,7 +35,7 @@ public class Utilisateur {
 
     public Utilisateur() {
     }
-
+    //immutable universally unique identifier
     public void generateToken() {
         token = UUID.randomUUID().toString();
     }

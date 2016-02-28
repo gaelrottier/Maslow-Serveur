@@ -10,5 +10,5 @@ import javax.transaction.Transactional;
  */
 @Transactional
 @org.springframework.stereotype.Repository
-public interface EvenementDao extends CrudRepository<Evenement, Long> {
+public interface EvenementDao extends CrudRepository<Evenement, Integer> {
 }
