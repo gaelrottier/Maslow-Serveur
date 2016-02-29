@@ -1,5 +1,8 @@
 package org.mbds.tpt.maslow.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -11,27 +14,27 @@ import java.util.List;
 @Entity
 public class Procedural {
 
-    //Id recu via la lampe, l'activité, ou le tag NFC
     @EmbeddedId
-    ProceduralPK idProcedural;
+    ProceduralPK proceduralPK;
 
     //A exécution immédiate par l'application
-    @OneToMany(mappedBy = "procedural")
+    @OneToMany(mappedBy = "procedural", cascade = CascadeType.ALL)
+    @JsonManagedReference
     List<Operation> operations;
 
     public Procedural() {
     }
 
-    public Procedural(ProceduralPK idProcedural) {
-        this.idProcedural = idProcedural;
+    public Procedural(ProceduralPK proceduralPK) {
+        this.proceduralPK = proceduralPK;
     }
 
-    public ProceduralPK getIdProcedural() {
-        return idProcedural;
+    public ProceduralPK getProceduralPK() {
+        return proceduralPK;
     }
 
-    public void setIdProcedural(ProceduralPK idProcedure) {
-        this.idProcedural = idProcedure;
+    public void setProceduralPK(ProceduralPK idProcedure) {
+        this.proceduralPK = idProcedure;
     }
 
     public List<Operation> getOperations() {
@@ -43,27 +46,4 @@ public class Procedural {
     }
 
 
-    @Override
-    public String toString() {
-        String proceduralToString = "{'idProcedural': " +
-                "{'idProcedural': " + idProcedural.getIdProcedural() + "," +
-                "'idUtilisateur': " + idProcedural.getIdUtilisateur() + "" +
-                "}," +
-                "'operations': [";
-        for (int i = 0; i <= operations.size() - 1; i++) {
-            Operation o = operations.get(i);
-
-            proceduralToString += "" +
-                    "{'id': " + o.getId() + "," +
-                    "'idOrchestra': '" + o.getIdOrchestra() + "'," +
-                    "'parametres': " + o.getParametres() + "}";
-            if (i != operations.size() - 1) {
-                proceduralToString += ",";
-            }
-        }
-
-        proceduralToString += "]}";
-
-        return proceduralToString;
-    }
 }

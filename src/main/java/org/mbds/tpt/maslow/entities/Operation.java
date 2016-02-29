@@ -1,14 +1,15 @@
 
 package org.mbds.tpt.maslow.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * Created by Gael on 17/02/2016.
  */
 @Entity
-public class Operation implements Serializable {
+public class Operation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,12 +17,12 @@ public class Operation implements Serializable {
 
     String idOrchestra;
 
-    @MapsId("idProcedural")
-    @JoinColumns(value = {
-            @JoinColumn(name = "idProcedural_fk", referencedColumnName = "idProcedural"),
-            @JoinColumn(name = "idUtilisateur_fk", referencedColumnName = "idUtilisateur")
+    @JoinColumns({
+            @JoinColumn(name = "id_procedural_fk", referencedColumnName = "idUtilisateur"),
+            @JoinColumn(name = "id_utilisateur_fk", referencedColumnName = "idProcedural")
     })
     @ManyToOne
+    @JsonBackReference
     Procedural procedural;
 
     //les parametres à envoyer avec l'id
