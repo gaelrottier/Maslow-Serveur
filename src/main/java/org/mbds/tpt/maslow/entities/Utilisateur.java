@@ -78,6 +78,10 @@ public class Utilisateur {
     }
 
     public void setPassword(String password) {
+        this.password = hashPassword(password);
+    }
+
+    public static String hashPassword(String password) {
         byte[] hashedPassword = null;
 
         try {
@@ -87,7 +91,15 @@ public class Utilisateur {
             System.out.println("MD5 n'est pas présent sur le système");
         }
 
-        this.password = new String(hashedPassword);
+        return new String(hashedPassword);
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override

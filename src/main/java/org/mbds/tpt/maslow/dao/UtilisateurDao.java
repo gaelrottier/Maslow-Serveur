@@ -9,9 +9,7 @@ import org.springframework.data.repository.CrudRepository;
  */
 @org.springframework.stereotype.Repository
 public interface UtilisateurDao extends CrudRepository<Utilisateur, Integer> {
-    Utilisateur findByPrenom(String prenom);
-
-    Utilisateur findByNom(String nom);
+    Utilisateur findByIdentifiantAndPassword(String identifiant, String password);
 
     @Query("SELECT case WHEN count(u) > 0 THEN 'true' ELSE 'false' END FROM Utilisateur u WHERE u.token = ?1")
     boolean existsWithToken(String token);

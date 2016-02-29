@@ -1,5 +1,7 @@
 package org.mbds.tpt.maslow.controllers;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mbds.tpt.maslow.dao.UtilisateurDao;
 import org.mbds.tpt.maslow.entities.Utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +69,25 @@ public class UtilisateurController {
             return new ResponseEntity<>("L'utilisateur demandé n'existe pas.", HttpStatus.NOT_FOUND);
         } catch (IllegalAccessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "/auth", method = RequestMethod.POST)
+    public ResponseEntity<String> authenticate(@RequestBody String credentials) {
+        try {
+            JSONObject json = new JSONObject(credentials);
+
+            String password = json.getString("password");
+
+            Utilisateur u = utilisateurDao.findByIdentifiantAndPassword(json.getString("identifiant"), Utilisateur.hashPassword(password));
+
+            if (u != null) {
+                return new ResponseEntity<>(u.getToken(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Echec de la connexion", HttpStatus.UNAUTHORIZED);
+            }
+        } catch (JSONException e) {
+            return new ResponseEntity<>("Les paramètres sont erronés", HttpStatus.BAD_REQUEST);
         }
     }
 }
