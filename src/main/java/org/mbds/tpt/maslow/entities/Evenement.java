@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class Evenement implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    //@GeneratedValue(strategy = GenerationType.AUTO)
     int id;
 
     String idOrchestra;

@@ -11,7 +11,7 @@ import java.util.List;
 public class WatchList implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    //@GeneratedValue(strategy = GenerationType.AUTO)
     int id;
 
     //Les appareils à surveiller par l'appli
