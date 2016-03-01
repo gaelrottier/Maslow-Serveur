@@ -1,5 +1,6 @@
 package org.mbds.tpt.maslow.controllers;
 
+import org.mbds.tpt.maslow.dao.OperationDao;
 import org.mbds.tpt.maslow.dao.ProceduralDao;
 import org.mbds.tpt.maslow.dao.UtilisateurDao;
 import org.mbds.tpt.maslow.entities.Operation;
@@ -22,6 +23,9 @@ public class OperationController {
 
     @Autowired
     private ProceduralDao proceduralDao;
+
+    @Autowired
+    private OperationDao operationDao;
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseEntity<?> createOperation(@PathVariable int idUtilisateur, @PathVariable int idProcedural,
@@ -77,8 +81,7 @@ public class OperationController {
             if (p.getOperation(idOperation) == null)
                 response = new ResponseEntity<>("L'opération n'existe pas pour la procédure demandée", HttpStatus.NOT_FOUND);
             else {
-                p.deleteOperation(idOperation);
-                p.addOperation(operation);
+                p.updateOperation(operation);
                 response = new ResponseEntity<>(proceduralDao.save(p), HttpStatus.OK);
             }
 
@@ -89,7 +92,7 @@ public class OperationController {
         return response;
     }
 
-    @RequestMapping(value = {"/", ""}, method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{idOperation}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteOperation(@PathVariable int idUtilisateur, @PathVariable int idProcedural,
                                              @PathVariable int idOperation, @RequestParam String token) {
         ResponseEntity<?> response;
@@ -97,9 +100,13 @@ public class OperationController {
         if (utilisateurDao.existsWithToken(token)) {
             Procedural p = proceduralDao.findOne(new ProceduralPK(idUtilisateur, idProcedural));
 
-            p.deleteOperation(idOperation);
+            if (p.getOperation(idOperation) == null) {
+                response = new ResponseEntity<>("L'opération n'existe pas pour la procédure demandée", HttpStatus.NOT_FOUND);
+            } else {
+                operationDao.delete(idOperation);
 
-            response = new ResponseEntity<>(proceduralDao.save(p), HttpStatus.CREATED);
+                response = new ResponseEntity<>("Opération supprimée", HttpStatus.OK);
+            }
         } else {
             response = new ResponseEntity<>("Le token est erroné", HttpStatus.UNAUTHORIZED);
         }

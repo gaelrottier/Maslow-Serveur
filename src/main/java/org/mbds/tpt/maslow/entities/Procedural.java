@@ -64,8 +64,19 @@ public class Procedural {
 
     public void deleteOperation(int idOperation) {
         for (int i = 0; i <= operations.size(); i++) {
-            if (operations.get(i).getId() == idOperation) {
+            Operation op = operations.get(i);
+            if (op.getId() == idOperation) {
+                op.setProcedural(null);
                 operations.remove(i);
+                break;
+            }
+        }
+    }
+
+    public void updateOperation(Operation o) {
+        for (int i = 0; i <= operations.size(); i++) {
+            if (operations.get(i).getId() == o.getId()) {
+                operations.set(i, o);
                 break;
             }
         }
