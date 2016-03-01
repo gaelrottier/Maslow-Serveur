@@ -15,7 +15,7 @@ import javax.validation.ConstraintViolationException;
  * Created by Gael on 17/02/2016.
  */
 @RestController
-@RequestMapping("/u/{idUtilisateur}/p")
+@RequestMapping("/u/{idUtilisateur}/p/{idProcedural}")
 public class ProceduralController {
 
     @Autowired
@@ -24,53 +24,41 @@ public class ProceduralController {
     @Autowired
     private UtilisateurDao utilisateurDao;
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ResponseEntity<?> createProcedural(@RequestBody Procedural procedural, @RequestParam String token) {
+    @RequestMapping(value = {"/", ""}, method = RequestMethod.POST)
+    public ResponseEntity<?> createProcedural(@PathVariable int idUtilisateur, @PathVariable int idProcedural, @RequestBody Procedural procedural, @RequestParam String token) {
+        ResponseEntity<?> response;
+
         try {
             if (utilisateurDao.existsWithToken(token)) {
-                return new ResponseEntity<>(proceduralDao.save(procedural), HttpStatus.CREATED);
+                procedural.setProceduralPK(new ProceduralPK(idUtilisateur, idProcedural));
+                response = new ResponseEntity<>(proceduralDao.save(procedural), HttpStatus.CREATED);
             } else {
-                throw new IllegalAccessException("Le token est erroné");
+                response = new ResponseEntity<>("Le token est erroné", HttpStatus.UNAUTHORIZED);
             }
         } catch (ConstraintViolationException e) {
-            return new ResponseEntity<>("Les paramètres ne sont pas bons.", HttpStatus.BAD_REQUEST);
-        } catch (IllegalAccessException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            response = new ResponseEntity<>("Les paramètres ne sont pas bons.", HttpStatus.BAD_REQUEST);
         }
+
+        return response;
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateProcedural(@RequestBody Procedural procedural, @RequestParam String token) {
+    @RequestMapping(value = {"/", ""}, method = RequestMethod.GET)
+    public ResponseEntity<?> readProcedural(@PathVariable int idUtilisateur, @PathVariable int idProcedural, @RequestParam String token) {
+        ResponseEntity<?> response;
+
         try {
 
             if (utilisateurDao.existsWithToken(token)) {
-                return new ResponseEntity<>(proceduralDao.save(procedural), HttpStatus.OK);
+                response = new ResponseEntity<>(proceduralDao.findOne(new ProceduralPK(idUtilisateur, idProcedural)), HttpStatus.OK);
             } else {
-                throw new IllegalAccessException("Le token est erroné");
-            }
-
-        } catch (ConstraintViolationException | IllegalArgumentException e) {
-            return new ResponseEntity<>("Les paramètres ne sont pas bons.", HttpStatus.BAD_REQUEST);
-        } catch (IllegalAccessException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @RequestMapping(value = "/{idProcedural}", method = RequestMethod.GET)
-    public ResponseEntity<?> readProcedure(@PathVariable int idUtilisateur, @PathVariable int idProcedural, @RequestParam String token) {
-        try {
-
-            if (utilisateurDao.existsWithToken(token)) {
-                return new ResponseEntity<>(proceduralDao.findOne(new ProceduralPK(idUtilisateur, idProcedural)), HttpStatus.OK);
-            } else {
-                throw new IllegalAccessException("Le token est erroné");
+                response = new ResponseEntity<>("Le token est erroné", HttpStatus.UNAUTHORIZED);
             }
 
         } catch (NullPointerException e) {
-            return new ResponseEntity<>("La procédure demandée n'existe pas.", HttpStatus.NOT_FOUND);
-        } catch (IllegalAccessException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            response = new ResponseEntity<>("La procédure demandée n'existe pas.", HttpStatus.NOT_FOUND);
         }
+
+        return response;
     }
 
 }
