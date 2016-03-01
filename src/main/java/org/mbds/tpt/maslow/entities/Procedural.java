@@ -45,5 +45,29 @@ public class Procedural {
         this.operations = operations;
     }
 
+    public void addOperation(Operation operation) {
+        this.operations.add(operation);
+    }
 
+    public Operation getOperation(int idOperation) {
+        Operation res = null;
+
+        for (Operation o : operations) {
+            if (o.getId() == idOperation) {
+                res = o;
+                break;
+            }
+        }
+
+        return res;
+    }
+
+    public void deleteOperation(int idOperation) {
+        for (int i = 0; i <= operations.size(); i++) {
+            if (operations.get(i).getId() == idOperation) {
+                operations.remove(i);
+                break;
+            }
+        }
+    }
 }
