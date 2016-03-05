@@ -1,23 +1,19 @@
 package org.mbds.tpt.maslow.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.io.Serializable;
+import javax.persistence.*;
 
 /**
  * Created by Gael on 17/02/2016.
  */
 @Entity
-public class Evenement implements Serializable {
+public class Evenement {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     int id;
 
     String idOrchestra;
-//
+    //
 //    @ManyToOne
 //    Appareil appareil;
 
@@ -44,7 +40,7 @@ public class Evenement implements Serializable {
     public void setIdOrchestra(String idOrchestra) {
         this.idOrchestra = idOrchestra;
     }
-//
+
 //    public Appareil getAppareil() {
 //        return appareil;
 //    }

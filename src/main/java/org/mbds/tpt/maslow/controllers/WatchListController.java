@@ -39,92 +39,128 @@ public class WatchListController {
     OperationDao operationDao;
 
 
-    //MAJ LISTE APPAREILS DANS UNE WATCHLIST
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> majListAppareilToWatchList(@PathVariable int id, @RequestBody List<Integer> idAppareils){
-        WatchList watchList = watchListDao.findOne(id);
-        Appareil appareil = new Appareil();
-        List<Appareil> appareilList = new ArrayList<>();
-        if (watchList != null){
-            for (Integer i: idAppareils){
-                appareil = appareilDao.findOne(i);
-                if (appareil != null){
-                    appareilList.add(appareil);
+    //MAJ APPAREIL 'ida' (existante) DANS UNE WATCHLIST 'idl'
+    @RequestMapping(value = "/{idl}/a/{ida}", method = RequestMethod.PUT)
+    public ResponseEntity<?> majListAppareilToWatchList(@PathVariable("idl") int idl, @PathVariable("ida") int ida, @RequestBody Appareil appareil,
+                                                        @RequestParam String token) {
+        try {
+            if (utilisateurDao.existsWithToken(token)) {
+
+                if (watchListDao.findOne(idl) != null) {
+                    //on a pas la reference bidirectionnelle avec appareil dans notre mapping pour une recherche plus propre
+                    int index = 0;
+                    for (Appareil appareil1 : watchListDao.findOne(idl).getAppareils()) {
+                        if ((appareil1.getId() == ida)) {
+                            //maj appareil
+                            watchListDao.findOne(idl).getAppareils().set(index, appareilDao.save(appareil));
+                            return new ResponseEntity<>(watchListDao.findOne(idl), HttpStatus.OK);
+                        }
+                        index++;
+                    }
+                        return new ResponseEntity<>("Appareil "+ida+" introuvable dans la watchlist "+idl+" ...", HttpStatus.NOT_FOUND);
+                } else {
+                    return new ResponseEntity<>("WatchList introuvable...", HttpStatus.NOT_FOUND);
                 }
+            } else {
+                throw new IllegalAccessException("Le token est erroné");
             }
-            watchList.setAppareils(appareilList);
-            watchListDao.save(watchList);
-            return new ResponseEntity<>(watchList, HttpStatus.OK);
+        } catch (NullPointerException e) {
+            return new ResponseEntity<>("La WatchList est Vide...", HttpStatus.NOT_FOUND);
+        } catch (IllegalAccessException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<Object>("ERREUR : LA WATCHLIST "+id+" N'EXISTE PAS", HttpStatus.BAD_REQUEST);
     }
 
-//    //CREATION WATCHLIST VIDE
-//    @RequestMapping(value = "/", method = RequestMethod.POST)
-//    public ResponseEntity<?> newWatchList(@RequestParam String token){
-//        try{
-//            if (utilisateurDao.existsWithToken(token)){
-//                //on pourrai renvoyer l'id de la nouvelle watchlist pour besoin de MAJ danss PUT
-//                return new ResponseEntity<>( watchListDao.save(new WatchList()), HttpStatus.OK);
-//            }else {
-//                throw new IllegalAccessException("Le token est erroné");
-//            }
-//
-//        } catch (NullPointerException e) {
-//            return new ResponseEntity<>("La WatchList est Vide...", HttpStatus.NOT_FOUND);
-//        } catch (IllegalAccessException e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-//        }
-//
-//
-//    }
 
+    //CREATION APPAREIL DANS UNE WATCHLIST 'idl' -- dans le body serai mieux ne pas specifier les id(appareil, evenement) deja gerés par le system
+    //au risque de devoir effectuer un operation en plus de maj pour cause de liste evenement vide en cas de conflit d'id avc appareil deja existant
+    @RequestMapping(value = "/{idl}/a", method = RequestMethod.POST)
+    public ResponseEntity<?> majListAppareilToWatchList(@PathVariable("idl") int idl,  @RequestBody Appareil appareil,
+                                                        @RequestParam String token) {
+        try {
+            if (utilisateurDao.existsWithToken(token)) {
+                WatchList watchList;
+                if ((watchList=watchListDao.findOne(idl)) != null) {
+                    //insertion nouveau appareil
+                    List<Appareil> appareils = watchList.getAppareils();
+                    appareils.add(appareil);
+                    watchList.setAppareils(appareils);
+                    return new ResponseEntity<>(watchListDao.save(watchList), HttpStatus.OK);
+
+                } else {
+                    return new ResponseEntity<>("WatchList "+idl+" introuvable...", HttpStatus.NOT_FOUND);
+                }
+            } else {
+                throw new IllegalAccessException("Le token est erroné");
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity<>("La WatchList "+idl+" est Vide...", HttpStatus.NOT_FOUND);
+        } catch (IllegalAccessException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+    //SUPPRESSION APPAREIL 'ida' DANS UNE WATCHLIST 'idl'
+    @RequestMapping(value = "/{idl}/a/{ida}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> supprimeAppareilToWatchList(@PathVariable("idl") int idl, @PathVariable("ida") int ida, @RequestParam String token) {
+        try {
+            if (utilisateurDao.existsWithToken(token)) {
+                WatchList watchList;
+                if ((watchList=watchListDao.findOne(idl)) != null) {
+                    //on a pas la reference bidirectionnelle avec appareil dans notre mapping pour une recherche plus propre
+                    int index = 0;
+                    boolean trouve = false;
+                    List<Appareil> appareils = watchList.getAppareils();
+                    for (Appareil appareil1 : watchList.getAppareils()) {
+                        if ((appareil1.getId() == ida)) {
+                            trouve=true;
+                            break;
+                        }
+                        index++;
+                    }
+                    if(trouve){
+                        Appareil app = appareils.remove(index);
+                        //suppression de l'appareil
+                        appareilDao.delete(app);
+                        watchList.setAppareils(appareils);
+                        return new ResponseEntity<>(watchListDao.save(watchList),HttpStatus.OK);
+                    } else {
+                        return new ResponseEntity<>("Appareil "+ida+" introuvable dans la watchlist "+idl+" ...", HttpStatus.NOT_FOUND);
+                    }
+
+                } else {
+                    return new ResponseEntity<>("WatchList introuvable...", HttpStatus.NOT_FOUND);
+                }
+            } else {
+                throw new IllegalAccessException("Le token est erroné");
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity<>("La WatchList est Vide...", HttpStatus.NOT_FOUND);
+        } catch (IllegalAccessException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
     //CREATION WATCHLIST PARAM JSON
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
-    public ResponseEntity<?> createWatchList(@PathVariable int id, @RequestBody String watchlistStr, @RequestParam String token){
+    public ResponseEntity<?> createWatchList(@PathVariable int id, @RequestBody WatchList watchlistStr, @RequestParam String token){
         try {
-            JSONObject jsonO = new JSONObject(watchlistStr);
-            JSONArray jsonArrayObject =  jsonO.getJSONArray("appareils");
 
             if (utilisateurDao.existsWithToken(token)) {
-                List<Appareil> appareilList = new ArrayList<>();
-                for (int i=0;i<jsonArrayObject.length();i++){
-                    JSONObject json = jsonArrayObject.getJSONObject(i);
-                    Appareil  appareil = new Appareil();
-                    appareil.setId(json.getInt("id"));
-                    appareil.setNom(json.getString("nom"));
-                    JSONArray jsonEventList = json.getJSONArray("evenements");
-                    List<Evenement> evenementList = new ArrayList<>();
-                    for (int j=0;j<jsonEventList.length();j++){
-                        Evenement event = new Evenement();
-                        JSONObject jsonEvent = jsonEventList.getJSONObject(j);
-                        event.setId(jsonEvent.getInt("id"));
-                        event.setIdOrchestra(jsonEvent.getString("idOrchestra"));
-                        //JSONObject jsonAlias = new JSONObject(jsonEvents.getString("alias")); sert pour la lecture "GET"
-                        event.setAlias(jsonEvent.getString("alias"));
-                        evenementDao.save(event);
-                        evenementList.add(event);
-                    }
-                    appareil.setEvenements(evenementList);
-                    appareilDao.save(appareil);
-                    appareilList.add(appareil);
-                }
 
-                WatchList w = new WatchList();
-                w.setId(id);
-                w.setAppareils(appareilList);
-                watchListDao.save(w);
-                return new ResponseEntity<>( watchListDao.findAll(), HttpStatus.OK);
+                watchlistStr.setId(id);
+                return new ResponseEntity<>(watchListDao.save(watchlistStr), HttpStatus.OK);
 
             } else {
                 throw new IllegalAccessException("Le token est erroné");
             }
 
         } catch (NullPointerException e) {
-            return new ResponseEntity<>("La WatchList est Vide...", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("La WatchList "+id+" est Vide...", HttpStatus.NOT_FOUND);
         } catch (IllegalAccessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
+
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -135,7 +171,6 @@ public class WatchListController {
 
                 return new ResponseEntity<>((List<WatchList>) watchListDao.findAll(), HttpStatus.OK);
 
-
             } else {
                 throw new IllegalAccessException("Le token est erroné");
             }
@@ -146,84 +181,6 @@ public class WatchListController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
-//        WatchList w = new WatchList();
-//        w.setId(1);
-//        List<Appareil> appareils = new ArrayList<>();
-//        List<Evenement> evenements = new ArrayList<>();
-//
-//        Evenement e1 = new Evenement();
-//        e1.setIdOrchestra("azerty");
-//        e1.setAlias("{'nomMaslow':'on', 'nomOrchestra' : 'switchOn'}");
-//        evenements.add(e1);
-//        evenementDao.save(e1);
-//
-//        Evenement e2 = new Evenement();
-//        e2.setIdOrchestra("qsdfg");
-//        e2.setAlias("{'nomMaslow':'off', 'nomOrchestra' : 'switchOff'}");
-//        evenements.add(e2);
-//        evenementDao.save(e2);
-//
-//        Appareil a1 = new Appareil();
-//        a1.setNom("appareil_1");
-//        a1.setEvenements(evenements);
-//        appareilDao.save(a1);
-////        evenementDao.save(e1);
-////        evenementDao.save(e2);
-//
-//
-//        appareils.add(a1);
-//
-//        evenements = new ArrayList<>();
-//        Evenement e3 = new Evenement();
-//        e3.setIdOrchestra("azerty");
-//        e3.setAlias("{'nomMaslow':'on', 'nomOrchestra' : 'switchOn'}");
-//        evenements.add(e3);
-//        evenementDao.save(e3);
-//
-//        Evenement e4 = new Evenement();
-//        e4.setIdOrchestra("qsdfg");
-//        e4.setAlias("{'nomMaslow':'off', 'nomOrchestra' : 'switchOff'}");
-//        evenements.add(e4);
-//        evenementDao.save(e4);
-//
-//        Appareil a2 = new Appareil();
-//        a2.setNom("appareil_2");
-//        a2.setEvenements(evenements);
-//        appareilDao.save(a2);
-////
-////        evenementDao.save(e3);
-////        evenementDao.save(e4);
-//
-//        appareils.add(a2);
-//        w.setAppareils(appareils);
-//        watchListDao.save(w);
-//
-////        ProceduralPK pk = new ProceduralPK(1, 7);
-////        Procedural p = new Procedural(pk);
-////
-////        List<Operation> operations = new ArrayList<>();
-////        Operation o1 = new Operation();
-////        o1.setIdOrchestra("jhkazekjhazkejheaz");
-////        o1.setParametres("{'param1', 'param2'}");
-////
-////        Operation o2 = new Operation();
-////        o2.setIdOrchestra("poiuytreza");
-////        o2.setParametres("{'param1', 'param2'}");
-////
-////        o1.setProcedural(p);
-////        o2.setProcedural(p);
-////
-////        operations.add(o1);
-////        operations.add(o2);
-////
-////        p.setOperations(operations);
-////
-////        proceduralDao.save(p);
-////        operationDao.save(o1);
-////        operationDao.save(o2);
-//
-//        return new ResponseEntity<>(w, HttpStatus.CREATED);
-//    }
 
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

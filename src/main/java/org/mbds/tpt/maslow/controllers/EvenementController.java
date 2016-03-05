@@ -32,11 +32,8 @@ public class EvenementController {
             events.add(evenementDao.save(ev));
         }
         Appareil app = appareilDao.findOne(idapp);
-        app.setEvenements(events);
+        app.setEvenements(evenements);
         appareilDao.save(app);
         return new ResponseEntity<List<Evenement>>(events,HttpStatus.OK);
     }
-
-
-
 }

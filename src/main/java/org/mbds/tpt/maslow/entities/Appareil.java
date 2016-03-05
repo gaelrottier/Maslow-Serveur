@@ -8,7 +8,7 @@ import java.util.List;
  * Created by Gael on 17/02/2016.
  */
 @Entity
-public class Appareil implements Serializable {
+public class Appareil {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,7 +17,8 @@ public class Appareil implements Serializable {
     //Nom affiché par l'appli
     String nom;
 
-    @OneToMany()
+    @OneToMany( cascade = CascadeType.ALL)
+    @JoinColumn(name = "appareil_id")
     List<Evenement> evenements;
 
 //    @ManyToOne
@@ -49,7 +50,8 @@ public class Appareil implements Serializable {
     public void setEvenements(List<Evenement> evenements) {
         this.evenements = evenements;
     }
-//
+
+    //
 //    public WatchList getWatchlist() {
 //        return watchlist;
 //    }

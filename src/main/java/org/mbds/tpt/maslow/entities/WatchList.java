@@ -1,21 +1,22 @@
 package org.mbds.tpt.maslow.entities;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Gael on 17/02/2016.
  */
 @Entity
-public class WatchList implements Serializable {
+public class WatchList{
 
     @Id
     //@GeneratedValue(strategy = GenerationType.AUTO)
     int id;
 
     //Les appareils à surveiller par l'appli
-    @OneToMany()
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "watchlist_id")
     List<Appareil> appareils;
 
     public WatchList() {
