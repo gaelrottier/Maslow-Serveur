@@ -51,12 +51,33 @@ public class Appareil {
         this.evenements = evenements;
     }
 
-    //
-//    public WatchList getWatchlist() {
-//        return watchlist;
-//    }
-//
-//    public void setWatchlist(WatchList watchlist) {
-//        this.watchlist = watchlist;
-//    }
+    public void updateEvenement(Evenement e) {
+        for (int i = 0; i <= evenements.size(); i++) {
+            if (evenements.get(i).getId() == e.getId()) {
+                evenements.set(i, e);
+                break;
+            }
+        }
+    }
+
+    public Evenement getEvenement(int idEvenement) {
+        Evenement res = null;
+        for (Evenement e : evenements) {
+            if (e.getId() == idEvenement) {
+                res = e;
+                break;
+            }
+        }
+        return res;
+    }
+
+    public void deleteEvenement(int idEvenement) {
+        for (int i = 0; i <= evenements.size(); i++) {
+            Evenement e = evenements.get(i);
+            if (e.getId() == idEvenement) {
+                evenements.remove(i);
+                break;
+            }
+        }
+    }
 }

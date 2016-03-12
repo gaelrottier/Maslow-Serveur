@@ -37,4 +37,24 @@ public class WatchList{
     public void setAppareils(List<Appareil> appareils) {
         this.appareils = appareils;
     }
+
+    public void updateAppareil(Appareil a) {
+        for (int i = 0; i <= appareils.size(); i++) {
+            if (appareils.get(i).getId() == a.getId()) {
+                appareils.set(i, a);
+                break;
+            }
+        }
+    }
+
+    public Appareil getAppareil(int idAppareil) {
+        Appareil res = null;
+        for (Appareil a : appareils) {
+            if (a.getId() == idAppareil) {
+                res = a;
+                break;
+            }
+        }
+        return res;
+    }
 }
