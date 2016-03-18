@@ -11,13 +11,13 @@ public class WatchList{
 
     @Id
     //@GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
+    private int id;
 
     //Les appareils à surveiller par l'appli
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "watchlist_id")
-    List<Appareil> appareils;
+    private List<Appareil> appareils;
 
     public WatchList() {
     }

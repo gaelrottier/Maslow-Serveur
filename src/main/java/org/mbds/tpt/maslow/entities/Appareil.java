@@ -1,7 +1,6 @@
 package org.mbds.tpt.maslow.entities;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,14 +11,14 @@ public class Appareil {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
+    private int id;
 
     //Nom affiché par l'appli
-    String nom;
+    private String nom;
 
     @OneToMany( cascade = CascadeType.ALL)
     @JoinColumn(name = "appareil_id")
-    List<Evenement> evenements;
+    private List<Evenement> evenements;
 
 //    @ManyToOne
 //    WatchList watchlist;

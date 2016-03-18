@@ -1,6 +1,9 @@
 package org.mbds.tpt.maslow.entities;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 /**
  * Created by Gael on 17/02/2016.
@@ -10,9 +13,9 @@ public class Evenement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
+    private int id;
 
-    String idOrchestra;
+    private String idOrchestra;
     //
 //    @ManyToOne
 //    Appareil appareil;
@@ -20,7 +23,7 @@ public class Evenement {
     //Permet de faire la correspondance entre
     // le nom du paramètre envoyé par orchestra et
     // le nom de paramètre traité par l'appli
-    String alias;
+    private String alias;
 
     public Evenement() {
     }

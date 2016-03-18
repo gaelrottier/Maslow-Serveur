@@ -1,16 +1,12 @@
 package org.mbds.tpt.maslow.controllers;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.mbds.tpt.maslow.dao.*;
-import org.mbds.tpt.maslow.entities.*;
+import org.mbds.tpt.maslow.entities.WatchList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,14 +31,15 @@ public class WatchListController {
     @Autowired
     ProceduralDao proceduralDao;
 
-
     @Autowired
     OperationDao operationDao;
 
 
     //CREATION WATCHLIST PARAM JSON
-    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
-    public ResponseEntity<?> createWatchList(@PathVariable int id, @RequestBody WatchList watchlist, @RequestParam String token){
+
+    //A SUPPRIMER PAR LA SUITE, ON NE PEUT PAS CREER DE WATCHLIST
+    @RequestMapping(value = "/{id}/", method = RequestMethod.POST)
+    public ResponseEntity<?> createWatchList(@PathVariable int id, @RequestBody WatchList watchlist, @RequestParam String token) {
         try {
 
             if (utilisateurDao.existsWithToken(token)) {
@@ -55,7 +52,7 @@ public class WatchListController {
             }
 
         } catch (NullPointerException e) {
-            return new ResponseEntity<>("La WatchList "+id+" est Vide...", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("La WatchList " + id + " est Vide...", HttpStatus.NOT_FOUND);
         } catch (IllegalAccessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -63,15 +60,15 @@ public class WatchListController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.PUT)
-    public ResponseEntity<?> majWatchList(@RequestBody WatchList watchlist, @RequestParam String token){
+    public ResponseEntity<?> majWatchList(@RequestBody WatchList watchlist, @RequestParam String token) {
         try {
 
             if (utilisateurDao.existsWithToken(token)) {
 
-                if (watchListDao.findOne(watchlist.getId()) != null){
+                if (watchListDao.findOne(watchlist.getId()) != null) {
                     return new ResponseEntity<Object>(watchListDao.save(watchlist), HttpStatus.OK);
-                }else{
-                    return new ResponseEntity<>("La WatchList "+watchlist.getId()+" est Vide...", HttpStatus.NOT_FOUND);
+                } else {
+                    return new ResponseEntity<>("La WatchList " + watchlist.getId() + " est Vide...", HttpStatus.NOT_FOUND);
                 }
 
             } else {
@@ -79,7 +76,7 @@ public class WatchListController {
             }
 
         } catch (NullPointerException e) {
-            return new ResponseEntity<>("La WatchList "+watchlist.getId()+" est Vide...", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("La WatchList " + watchlist.getId() + " est Vide...", HttpStatus.NOT_FOUND);
         } catch (IllegalAccessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -106,7 +103,7 @@ public class WatchListController {
     }
 
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/", method = RequestMethod.GET)
     public ResponseEntity<?> readWatchList(@PathVariable int id, @RequestParam String token) {
         try {
             if (utilisateurDao.existsWithToken(token)) {
@@ -116,7 +113,7 @@ public class WatchListController {
                 throw new IllegalAccessException("Le token est erroné");
             }
         } catch (NullPointerException e) {
-            return new ResponseEntity<>("La WatchList "+id+" demandée n'existe pas.", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("La WatchList " + id + " demandée n'existe pas.", HttpStatus.NOT_FOUND);
         } catch (IllegalAccessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -129,7 +126,7 @@ public class WatchListController {
 
             if (utilisateurDao.existsWithToken(token)) {
                 watchListDao.delete(id);
-                return new ResponseEntity<String>(" WATCHLIST "+id+" DELETED...", HttpStatus.OK);
+                return new ResponseEntity<String>(" WATCHLIST " + id + " DELETED...", HttpStatus.OK);
 
 
             } else {
