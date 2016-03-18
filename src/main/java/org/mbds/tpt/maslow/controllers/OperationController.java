@@ -47,7 +47,7 @@ public class OperationController {
         return response;
     }
 
-    @RequestMapping(value = "/{idOperation}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{idOperation}/", method = RequestMethod.GET)
     public ResponseEntity<?> readOperation(@PathVariable int idUtilisateur, @PathVariable int idProcedural,
                                            @PathVariable int idOperation, @RequestParam String token) {
         ResponseEntity<?> response;
@@ -92,7 +92,7 @@ public class OperationController {
         return response;
     }
 
-    @RequestMapping(value = "/{idOperation}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{idOperation}/", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteOperation(@PathVariable int idUtilisateur, @PathVariable int idProcedural,
                                              @PathVariable int idOperation, @RequestParam String token) {
         ResponseEntity<?> response;

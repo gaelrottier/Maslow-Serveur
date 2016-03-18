@@ -120,7 +120,7 @@ public class WatchListController {
     }
 
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}/", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteWatchList(@PathVariable int id, @RequestParam String token) {
         try {
 

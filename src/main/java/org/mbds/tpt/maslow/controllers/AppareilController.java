@@ -4,15 +4,12 @@ import org.mbds.tpt.maslow.dao.AppareilDao;
 import org.mbds.tpt.maslow.dao.UtilisateurDao;
 import org.mbds.tpt.maslow.dao.WatchListDao;
 import org.mbds.tpt.maslow.entities.Appareil;
-import org.mbds.tpt.maslow.entities.Procedural;
-import org.mbds.tpt.maslow.entities.ProceduralPK;
 import org.mbds.tpt.maslow.entities.WatchList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -83,7 +80,7 @@ public class AppareilController {
         return response;
     }
 
-    @RequestMapping(value = "/{idAppareil}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{idAppareil}/", method = RequestMethod.GET)
     public ResponseEntity<?> getAppareil(@PathVariable int idWatchList, @PathVariable int idAppareil,
                                          @RequestParam String token){
         ResponseEntity<?> response;
@@ -104,7 +101,7 @@ public class AppareilController {
         return response;
     }
 
-    @RequestMapping(value = "/{idAppareil}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{idAppareil}/", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteAppareil(@PathVariable int idWatchList, @PathVariable int idAppareil,@RequestParam String token){
         ResponseEntity<?> response;
         if (utilisateurDao.existsWithToken(token)) {

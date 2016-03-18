@@ -22,13 +22,20 @@ public class UtilisateurController {
     private UtilisateurDao utilisateurDao;
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ResponseEntity<String> createUtilisateur(@RequestBody Utilisateur utilisateur) {
+    public ResponseEntity<String> createUtilisateur(@RequestBody Utilisateur utilisateur, @PathVariable String token) {
         try {
-            utilisateur.generateToken();
+
+            if (utilisateurDao.existsWithToken(token)) {
+                utilisateur.generateToken();
+            } else {
+                throw new IllegalAccessException("Le token est erroné");
+            }
 
             return new ResponseEntity<>(utilisateurDao.save(utilisateur).toString(), HttpStatus.CREATED);
         } catch (ConstraintViolationException e) {
             return new ResponseEntity<>("Les paramètres ne sont pas bons.", HttpStatus.BAD_REQUEST);
+        } catch (IllegalAccessException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -55,7 +62,7 @@ public class UtilisateurController {
         }
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/", method = RequestMethod.GET)
     public ResponseEntity<String> readUtilisateur(@PathVariable("id") int id, @RequestParam String token) {
         try {
 
@@ -72,7 +79,7 @@ public class UtilisateurController {
         }
     }
 
-    @RequestMapping(value = "/auth", method = RequestMethod.POST)
+    @RequestMapping(value = "/auth/", method = RequestMethod.POST)
     public ResponseEntity<String> authenticate(@RequestBody String credentials) {
         try {
             JSONObject json = new JSONObject(credentials);

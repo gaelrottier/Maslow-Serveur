@@ -12,9 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Zac on 27/02/2016.
  */
@@ -97,7 +94,7 @@ public class EvenementController {
         return response;
     }
 
-    @RequestMapping(value = "/{idEvenement}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{idEvenement}/", method = RequestMethod.GET)
     public ResponseEntity<?> getAppareil(@PathVariable("idWatchlist") int idWatchList, @PathVariable("idAppareil") int idAppareil,
                                          @PathVariable("idEvenement") int idEvenement,@RequestParam String token){
         ResponseEntity<?> response;
@@ -149,7 +146,7 @@ public class EvenementController {
         return response;
     }
 
-    @RequestMapping(value = "/{idEvenement}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{idEvenement}/", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteAppareil(@PathVariable("idWatchlist") int idWatchList, @PathVariable("idAppareil") int idAppareil,
                                             @PathVariable("idEvenement") int idEvenement,@RequestParam String token){
         ResponseEntity<?> response;
