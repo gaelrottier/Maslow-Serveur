@@ -22,7 +22,7 @@ public class UtilisateurController {
     private UtilisateurDao utilisateurDao;
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ResponseEntity<String> createUtilisateur(@RequestBody Utilisateur utilisateur, @PathVariable String token) {
+    public ResponseEntity<String> createUtilisateur(@RequestBody Utilisateur utilisateur, @RequestParam String token) {
         try {
 
             if (utilisateurDao.existsWithToken(token)) {
@@ -80,16 +80,17 @@ public class UtilisateurController {
     }
 
     @RequestMapping(value = "/auth/", method = RequestMethod.POST)
-    public ResponseEntity<String> authenticate(@RequestBody String credentials) {
+    public ResponseEntity<?> authenticate(@RequestBody String credentials) {
         try {
             JSONObject json = new JSONObject(credentials);
 
             String password = json.getString("password");
 
-            Utilisateur u = utilisateurDao.findByIdentifiantAndPassword(json.getString("identifiant"), Utilisateur.hashPassword(password));
+            Utilisateur u = utilisateurDao.findByIdentifiantAndPassword(json.getString("identifiant"), password);
 
             if (u != null) {
-                return new ResponseEntity<>(u.getToken(), HttpStatus.OK);
+                u.setPassword("");
+                return new ResponseEntity<>(u, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Echec de la connexion", HttpStatus.UNAUTHORIZED);
             }

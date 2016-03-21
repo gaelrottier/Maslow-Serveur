@@ -45,39 +45,22 @@ public class WatchListController {
     //A SUPPRIMER PAR LA SUITE, ON NE PEUT PAS CREER DE WATCHLIST
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseEntity<?> init() {
-//    public ResponseEntity<?> init(@PathVariable int id, @RequestBody WatchList watchlist, @RequestParam String token) {
-//        try {
-//
-//            if (utilisateurDao.existsWithToken(token)) {
-//
-//                watchlist.setId(id);
-//                return new ResponseEntity<>(watchListDao.save(watchlist), HttpStatus.OK);
-//
-//            } else {
-//                throw new IllegalAccessException("Le token est erroné");
-//            }
-//
-//        } catch (NullPointerException e) {
-//            return new ResponseEntity<>("La WatchList " + id + " est Vide...", HttpStatus.NOT_FOUND);
-//        } catch (IllegalAccessException e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-//        }
-        WatchList w = new WatchList();
+        WatchList watchList1 = new WatchList();
 
         List<Evenement> evenementsArduino = new ArrayList<>();
 
         Evenement evenementArduinoOn = new Evenement();
         evenementArduinoOn.setIdOrchestra("aWGnLYQKqBnpsxJwm");
-        Map<String, String> aliasArduinoOn = new HashMap<>();
 
+        Map<String, String> aliasArduinoOn = new HashMap<>();
         aliasArduinoOn.put("nom", "on");
         aliasArduinoOn.put("nomOrchestra", "switchOn");
         evenementArduinoOn.setAlias(aliasArduinoOn);
 
         Evenement evenementArduinoOff = new Evenement();
         evenementArduinoOff.setIdOrchestra("AaMyshZoJyn9Ng33D");
-        Map<String, String> aliasArduinoOff = new HashMap<>();
 
+        Map<String, String> aliasArduinoOff = new HashMap<>();
         aliasArduinoOff.put("nom", "off");
         aliasArduinoOff.put("nomOrchestra", "switchOff");
         evenementArduinoOff.setAlias(aliasArduinoOff);
@@ -88,44 +71,65 @@ public class WatchListController {
         Appareil arduino = new Appareil();
         arduino.setEvenements(evenementsArduino);
         arduino.setNom("Arduino");
-        arduino.setWatchlist(w);
+        arduino.setWatchlist(watchList1);
 
 
         List<Evenement> evenementsChauffage = new ArrayList<>();
 
         Evenement evenementChauffageOn = new Evenement();
         evenementChauffageOn.setIdOrchestra("XHLQQ5yvhNNmv7Rad");
-        Map<String, String> aliasChauffageOn = new HashMap<>();
 
+        Map<String, String> aliasChauffageOn = new HashMap<>();
         aliasChauffageOn.put("nom", "on");
         aliasChauffageOn.put("nomOrchestra", "switchOn");
+
         evenementChauffageOn.setAlias(aliasChauffageOn);
 
         Evenement evenementChauffageOff = new Evenement();
         evenementChauffageOff.setIdOrchestra("kmvdPAgvFZ7dhRk6N");
-        Map<String, String> aliasChauffageOff = new HashMap<>();
 
+        Map<String, String> aliasChauffageOff = new HashMap<>();
         aliasChauffageOff.put("nom", "off");
         aliasChauffageOff.put("nomOrchestra", "switchOff");
         evenementChauffageOff.setAlias(aliasChauffageOff);
 
+
+        Evenement evenementPriseChauffageOn = new Evenement();
+        evenementPriseChauffageOn.setIdOrchestra("6DXJvDjpbxjYeDwJT");
+
+        Map<String, String> aliasPriseChauffageOn = new HashMap<>();
+        aliasPriseChauffageOn.put("nom", "on");
+        aliasPriseChauffageOn.put("parameterKey", "state");
+        aliasPriseChauffageOn.put("valeur", "1");
+        evenementPriseChauffageOn.setAlias(aliasPriseChauffageOn);
+
+        Evenement evenementPriseChauffageOff = new Evenement();
+        evenementPriseChauffageOff.setIdOrchestra("6DXJvDjpbxjYeDwJT");
+
+        Map<String, String> aliasPriseChauffageOff = new HashMap<>();
+        aliasPriseChauffageOff.put("nom", "off");
+        aliasPriseChauffageOff.put("parameterKey", "state");
+        aliasPriseChauffageOff.put("valeur", "0");
+        evenementPriseChauffageOff.setAlias(aliasPriseChauffageOff);
+
         evenementsChauffage.add(evenementChauffageOn);
         evenementsChauffage.add(evenementChauffageOff);
-
+        evenementsChauffage.add(evenementPriseChauffageOn);
+        evenementsChauffage.add(evenementPriseChauffageOff);
 
         Appareil chauffage = new Appareil();
         chauffage.setEvenements(evenementsChauffage);
         chauffage.setNom("Chauffage");
-        chauffage.setWatchlist(w);
+        chauffage.setWatchlist(watchList1);
 
         List<Appareil> appareils = new ArrayList<>();
         appareils.add(arduino);
         appareils.add(chauffage);
 
-        w.setAppareils(appareils);
-        w.setId(1);
+        watchList1.setAppareils(appareils);
+        watchList1.setId(1);
 
-        return new ResponseEntity<>(watchListDao.save(w), HttpStatus.CREATED);
+        return new ResponseEntity<>(watchListDao.save(watchList1), HttpStatus.CREATED);
 
     }
 
