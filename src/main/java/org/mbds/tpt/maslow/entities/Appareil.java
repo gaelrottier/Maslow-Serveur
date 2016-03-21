@@ -1,5 +1,8 @@
 package org.mbds.tpt.maslow.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -16,12 +19,21 @@ public class Appareil {
     //Nom affiché par l'appli
     private String nom;
 
-    @OneToMany( cascade = CascadeType.ALL)
-    @JoinColumn(name = "appareil_id")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Evenement> evenements;
 
-//    @ManyToOne
-//    WatchList watchlist;
+    @ManyToOne
+    @JsonBackReference
+    WatchList watchlist;
+
+    public WatchList getWatchlist() {
+        return watchlist;
+    }
+
+    public void setWatchlist(WatchList watchlist) {
+        this.watchlist = watchlist;
+    }
 
     public Appareil() {
     }

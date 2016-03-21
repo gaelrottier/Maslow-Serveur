@@ -1,13 +1,18 @@
 package org.mbds.tpt.maslow.entities;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.util.List;
 
 /**
  * Created by Gael on 17/02/2016.
  */
 @Entity
-public class WatchList{
+public class WatchList {
 
     @Id
     //@GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,7 +21,7 @@ public class WatchList{
     //Les appareils à surveiller par l'appli
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "watchlist_id")
+    @JsonManagedReference
     private List<Appareil> appareils;
 
     public WatchList() {
@@ -56,5 +61,16 @@ public class WatchList{
             }
         }
         return res;
+    }
+
+    public void deleteAppareil(int idAppareil) {
+        for (int i = 0; i <= appareils.size(); i++) {
+            Appareil a = appareils.get(i);
+            if (a.getId() == idAppareil) {
+                a.setWatchlist(null);
+                appareils.remove(i);
+                break;
+            }
+        }
     }
 }

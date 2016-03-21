@@ -1,9 +1,9 @@
 package org.mbds.tpt.maslow.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import javax.persistence.*;
+import java.util.Map;
 
 /**
  * Created by Gael on 17/02/2016.
@@ -17,13 +17,24 @@ public class Evenement {
 
     private String idOrchestra;
     //
-//    @ManyToOne
-//    Appareil appareil;
+    @ManyToOne
+    @JsonBackReference
+    Appareil appareil;
 
     //Permet de faire la correspondance entre
     // le nom du paramètre envoyé par orchestra et
     // le nom de paramètre traité par l'appli
-    private String alias;
+    @ElementCollection
+    private Map<String, String> alias;
+
+
+    public Appareil getAppareil() {
+        return appareil;
+    }
+
+    public void setAppareil(Appareil appareil) {
+        this.appareil = appareil;
+    }
 
     public Evenement() {
     }
@@ -44,19 +55,11 @@ public class Evenement {
         this.idOrchestra = idOrchestra;
     }
 
-//    public Appareil getAppareil() {
-//        return appareil;
-//    }
-//
-//    public void setAppareil(Appareil appareil) {
-//        this.appareil = appareil;
-//    }
-
-    public String getAlias() {
+    public Map<String, String> getAlias() {
         return alias;
     }
 
-    public void setAlias(String alias) {
+    public void setAlias(Map<String, String> alias) {
         this.alias = alias;
     }
 }

@@ -1,13 +1,18 @@
 package org.mbds.tpt.maslow.controllers;
 
 import org.mbds.tpt.maslow.dao.*;
+import org.mbds.tpt.maslow.entities.Appareil;
+import org.mbds.tpt.maslow.entities.Evenement;
 import org.mbds.tpt.maslow.entities.WatchList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Gael on 17/02/2016.
@@ -38,24 +43,89 @@ public class WatchListController {
     //CREATION WATCHLIST PARAM JSON
 
     //A SUPPRIMER PAR LA SUITE, ON NE PEUT PAS CREER DE WATCHLIST
-    @RequestMapping(value = "/{id}/", method = RequestMethod.POST)
-    public ResponseEntity<?> createWatchList(@PathVariable int id, @RequestBody WatchList watchlist, @RequestParam String token) {
-        try {
+    @RequestMapping(value = "/", method = RequestMethod.POST)
+    public ResponseEntity<?> init() {
+//    public ResponseEntity<?> init(@PathVariable int id, @RequestBody WatchList watchlist, @RequestParam String token) {
+//        try {
+//
+//            if (utilisateurDao.existsWithToken(token)) {
+//
+//                watchlist.setId(id);
+//                return new ResponseEntity<>(watchListDao.save(watchlist), HttpStatus.OK);
+//
+//            } else {
+//                throw new IllegalAccessException("Le token est erroné");
+//            }
+//
+//        } catch (NullPointerException e) {
+//            return new ResponseEntity<>("La WatchList " + id + " est Vide...", HttpStatus.NOT_FOUND);
+//        } catch (IllegalAccessException e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+//        }
+        WatchList w = new WatchList();
 
-            if (utilisateurDao.existsWithToken(token)) {
+        List<Evenement> evenementsArduino = new ArrayList<>();
 
-                watchlist.setId(id);
-                return new ResponseEntity<>(watchListDao.save(watchlist), HttpStatus.OK);
+        Evenement evenementArduinoOn = new Evenement();
+        evenementArduinoOn.setIdOrchestra("aWGnLYQKqBnpsxJwm");
+        Map<String, String> aliasArduinoOn = new HashMap<>();
 
-            } else {
-                throw new IllegalAccessException("Le token est erroné");
-            }
+        aliasArduinoOn.put("nom", "on");
+        aliasArduinoOn.put("nomOrchestra", "switchOn");
+        evenementArduinoOn.setAlias(aliasArduinoOn);
 
-        } catch (NullPointerException e) {
-            return new ResponseEntity<>("La WatchList " + id + " est Vide...", HttpStatus.NOT_FOUND);
-        } catch (IllegalAccessException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+        Evenement evenementArduinoOff = new Evenement();
+        evenementArduinoOff.setIdOrchestra("AaMyshZoJyn9Ng33D");
+        Map<String, String> aliasArduinoOff = new HashMap<>();
+
+        aliasArduinoOff.put("nom", "off");
+        aliasArduinoOff.put("nomOrchestra", "switchOff");
+        evenementArduinoOff.setAlias(aliasArduinoOff);
+
+        evenementsArduino.add(evenementArduinoOn);
+        evenementsArduino.add(evenementArduinoOff);
+
+        Appareil arduino = new Appareil();
+        arduino.setEvenements(evenementsArduino);
+        arduino.setNom("Arduino");
+        arduino.setWatchlist(w);
+
+
+        List<Evenement> evenementsChauffage = new ArrayList<>();
+
+        Evenement evenementChauffageOn = new Evenement();
+        evenementChauffageOn.setIdOrchestra("XHLQQ5yvhNNmv7Rad");
+        Map<String, String> aliasChauffageOn = new HashMap<>();
+
+        aliasChauffageOn.put("nom", "on");
+        aliasChauffageOn.put("nomOrchestra", "switchOn");
+        evenementChauffageOn.setAlias(aliasChauffageOn);
+
+        Evenement evenementChauffageOff = new Evenement();
+        evenementChauffageOff.setIdOrchestra("kmvdPAgvFZ7dhRk6N");
+        Map<String, String> aliasChauffageOff = new HashMap<>();
+
+        aliasChauffageOff.put("nom", "off");
+        aliasChauffageOff.put("nomOrchestra", "switchOff");
+        evenementChauffageOff.setAlias(aliasChauffageOff);
+
+        evenementsChauffage.add(evenementChauffageOn);
+        evenementsChauffage.add(evenementChauffageOff);
+
+
+        Appareil chauffage = new Appareil();
+        chauffage.setEvenements(evenementsChauffage);
+        chauffage.setNom("Chauffage");
+        chauffage.setWatchlist(w);
+
+        List<Appareil> appareils = new ArrayList<>();
+        appareils.add(arduino);
+        appareils.add(chauffage);
+
+        w.setAppareils(appareils);
+        w.setId(1);
+
+        return new ResponseEntity<>(watchListDao.save(w), HttpStatus.CREATED);
 
     }
 
