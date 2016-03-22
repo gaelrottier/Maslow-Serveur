@@ -25,10 +25,11 @@ public class UtilisateurController {
     public ResponseEntity<String> createUtilisateur(@RequestBody Utilisateur utilisateur, @RequestParam String token) {
         try {
 
-            if (utilisateurDao.existsWithToken(token)) {
+            if (utilisateurDao.existsWithToken(token) && !utilisateurDao.exists(utilisateur.getIdentifiant())) {
                 utilisateur.generateToken();
+                utilisateur.hashPassword();
             } else {
-                throw new IllegalAccessException("Le token est erroné");
+                throw new IllegalAccessException("Le token est erroné ou un utilisateur existe déjà avec le même identifiant");
             }
 
             return new ResponseEntity<>(utilisateurDao.save(utilisateur).toString(), HttpStatus.CREATED);
@@ -79,6 +80,23 @@ public class UtilisateurController {
         }
     }
 
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ResponseEntity<?> readAllUtilisateur(@RequestParam String token) {
+        try {
+
+            if (utilisateurDao.existsWithToken(token)) {
+                return new ResponseEntity<>(utilisateurDao.findAll(), HttpStatus.OK);
+            } else {
+                throw new IllegalAccessException("Le token est erroné");
+            }
+
+        } catch (NullPointerException e) {
+            return new ResponseEntity<>("L'utilisateur demandé n'existe pas.", HttpStatus.NOT_FOUND);
+        } catch (IllegalAccessException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
     @RequestMapping(value = "/auth/", method = RequestMethod.POST)
     public ResponseEntity<?> authenticate(@RequestBody String credentials) {
         try {
@@ -86,7 +104,7 @@ public class UtilisateurController {
 
             String password = json.getString("password");
 
-            Utilisateur u = utilisateurDao.findByIdentifiantAndPassword(json.getString("identifiant"), password);
+            Utilisateur u = utilisateurDao.findByIdentifiantAndPassword(json.getString("identifiant"), Utilisateur.hashPassword(password));
 
             if (u != null) {
                 u.setPassword("");
@@ -94,7 +112,7 @@ public class UtilisateurController {
             } else {
                 return new ResponseEntity<>("Echec de la connexion", HttpStatus.UNAUTHORIZED);
             }
-        } catch (JSONException e) {
+        } catch (JSONException | NullPointerException e) {
             return new ResponseEntity<>("Les paramètres sont erronés", HttpStatus.BAD_REQUEST);
         }
     }

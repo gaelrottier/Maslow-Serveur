@@ -78,7 +78,11 @@ public class Utilisateur {
     }
 
     public void setPassword(String password) {
-        this.password = hashPassword(password);
+        this.password = password;
+    }
+
+    public void hashPassword() {
+        password = hashPassword(password);
     }
 
     public static String hashPassword(String password) {
