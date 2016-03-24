@@ -25,7 +25,8 @@ public class UtilisateurController {
     public ResponseEntity<String> createUtilisateur(@RequestBody Utilisateur utilisateur, @RequestParam String token) {
         try {
 
-            if (utilisateurDao.existsWithToken(token) && !utilisateurDao.exists(utilisateur.getIdentifiant())) {
+            if (!utilisateurDao.exists(utilisateur.getIdentifiant()) &&
+                    utilisateurDao.isAdmin(token)) {
                 utilisateur.generateToken();
                 utilisateur.hashPassword();
             } else {
@@ -103,8 +104,9 @@ public class UtilisateurController {
             JSONObject json = new JSONObject(credentials);
 
             String password = json.getString("password");
+            String identifiant = json.getString("identifiant");
 
-            Utilisateur u = utilisateurDao.findByIdentifiantAndPassword(json.getString("identifiant"), Utilisateur.hashPassword(password));
+            Utilisateur u = utilisateurDao.findByIdentifiantAndPassword(identifiant, password);
 
             if (u != null) {
                 u.setPassword("");
@@ -112,6 +114,7 @@ public class UtilisateurController {
             } else {
                 return new ResponseEntity<>("Echec de la connexion", HttpStatus.UNAUTHORIZED);
             }
+
         } catch (JSONException | NullPointerException e) {
             return new ResponseEntity<>("Les paramètres sont erronés", HttpStatus.BAD_REQUEST);
         }
