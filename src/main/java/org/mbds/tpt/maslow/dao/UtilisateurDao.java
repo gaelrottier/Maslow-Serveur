@@ -19,4 +19,10 @@ public interface UtilisateurDao extends CrudRepository<Utilisateur, Integer> {
 
     @Query("SELECT case WHEN count(u) > 0 THEN 'true' ELSE 'false' END FROM  Utilisateur u WHERE u.token = ?1 AND u.identifiant = 'admin'")
     boolean isAdmin(String token);
+
+    @Query("SELECT u.id FROM Utilisateur u WHERE u.token = ?1")
+    Integer findIdByToken(String token);
+
+    @Query("SELECT case WHEN count (u) > 0 THEN 'true' ELSE 'false' END FROM  Utilisateur u WHERE u.id = ?1 AND u.token = ?2")
+    boolean existsWithIdAndToken(Integer idUtilisateur, String token);
 }

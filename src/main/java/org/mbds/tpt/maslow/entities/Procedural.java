@@ -1,32 +1,56 @@
 package org.mbds.tpt.maslow.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import javax.persistence.CascadeType;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 /**
  * Created by Gael on 17/02/2016.
  */
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.None.class, property = "proceduralPK")
 public class Procedural {
-
     @EmbeddedId
-    ProceduralPK proceduralPK;
+    @AttributeOverrides({
+            @AttributeOverride(name = "id_utilisateur", column = @Column(name = "idUtilisateur")),
+            @AttributeOverride(name = "id_procedural", column = @Column(name = "id_procedural"))
+    })
+    private ProceduralPK proceduralPK;
+
+    @JoinColumn(name = "idUtilisateur", insertable = false, updatable = false)
+    @ManyToOne
+    private Utilisateur utilisateur;
 
     //A exécution immédiate par l'application
-    @OneToMany(mappedBy = "procedural", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    List<Operation> operations;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            joinColumns = {
+                    @JoinColumn(name = "id_utilisateur", nullable = false),
+                    @JoinColumn(name = "id_procedural", nullable = false)
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "id_operation", nullable = false)
+            })
+    private List<Operation> operations;
 
     public Procedural() {
     }
 
     public Procedural(ProceduralPK proceduralPK) {
         this.proceduralPK = proceduralPK;
+
+    }
+
+    @JsonIgnore
+    public Utilisateur getUtilisateur() {
+        return utilisateur;
+    }
+
+    public void setUtilisateur(Utilisateur utilisateur) {
+        this.utilisateur = utilisateur;
     }
 
     public ProceduralPK getProceduralPK() {

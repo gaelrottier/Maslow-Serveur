@@ -1,15 +1,18 @@
 package org.mbds.tpt.maslow.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Gael on 17/02/2016.
  */
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Appareil {
 
     @Id
@@ -20,19 +23,19 @@ public class Appareil {
     private String nom;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Evenement> evenements;
+    private List<Evenement> evenements = new ArrayList<>();
 
-    @ManyToOne
-    @JsonBackReference
-    WatchList watchlist;
 
-    public WatchList getWatchlist() {
-        return watchlist;
+    @ManyToMany(mappedBy = "appareils")
+    private List<WatchList> watchlists = new ArrayList<>();
+
+    @JsonIgnore
+    public List<WatchList> getWatchlists() {
+        return watchlists;
     }
 
-    public void setWatchlist(WatchList watchlist) {
-        this.watchlist = watchlist;
+    public void setWatchlists(List<WatchList> watchlists) {
+        this.watchlists = watchlists;
     }
 
     public Appareil() {

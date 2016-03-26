@@ -25,15 +25,16 @@ public class ProceduralController {
     private UtilisateurDao utilisateurDao;
 
     @RequestMapping(value = {"/", ""}, method = RequestMethod.POST)
-    public ResponseEntity<?> createProcedural(@PathVariable int idUtilisateur, @PathVariable int idProcedural, @RequestBody Procedural procedural, @RequestParam String token) {
+    public ResponseEntity<?> createProcedural(@PathVariable int idUtilisateur, @PathVariable int idProcedural,
+                                              @RequestBody Procedural procedural, @RequestParam String token) {
         ResponseEntity<?> response;
 
         try {
-            if (utilisateurDao.existsWithToken(token)) {
+            if (utilisateurDao.existsWithIdAndToken(idUtilisateur, token) || utilisateurDao.isAdmin(token)) {
                 procedural.setProceduralPK(new ProceduralPK(idUtilisateur, idProcedural));
                 response = new ResponseEntity<>(proceduralDao.save(procedural), HttpStatus.CREATED);
             } else {
-                response = new ResponseEntity<>("Le token est erroné", HttpStatus.UNAUTHORIZED);
+                response = new ResponseEntity<>("Token erroné ou non autorisé", HttpStatus.UNAUTHORIZED);
             }
         } catch (ConstraintViolationException e) {
             response = new ResponseEntity<>("Les paramètres ne sont pas bons.", HttpStatus.BAD_REQUEST);
@@ -48,7 +49,7 @@ public class ProceduralController {
 
         try {
 
-            if (utilisateurDao.existsWithToken(token)) {
+            if (utilisateurDao.existsWithIdAndToken(idUtilisateur, token) || utilisateurDao.isAdmin(token)) {
                 response = new ResponseEntity<>(proceduralDao.findOne(new ProceduralPK(idUtilisateur, idProcedural)), HttpStatus.OK);
             } else {
                 response = new ResponseEntity<>("Le token est erroné", HttpStatus.UNAUTHORIZED);

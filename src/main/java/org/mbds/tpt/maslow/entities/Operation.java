@@ -1,14 +1,18 @@
 
 package org.mbds.tpt.maslow.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+import java.util.Map;
 
 /**
  * Created by Gael on 17/02/2016.
  */
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Operation {
 
     @Id
@@ -18,15 +22,15 @@ public class Operation {
     String idOrchestra;
 
     @JoinColumns({
-            @JoinColumn(name = "id_procedural_fk", referencedColumnName = "idUtilisateur"),
-            @JoinColumn(name = "id_utilisateur_fk", referencedColumnName = "idProcedural")
+            @JoinColumn(name = "id_utilisateur_fk", referencedColumnName = "idUtilisateur"),
+            @JoinColumn(name = "id_procedural_fk", referencedColumnName = "idProcedural")
     })
     @ManyToOne
-    @JsonBackReference
     Procedural procedural;
 
     //les parametres à envoyer avec l'id
-    String parametres;
+    @ElementCollection
+    private Map<String, String> params;
 
     public Operation() {
     }
@@ -47,6 +51,7 @@ public class Operation {
         this.idOrchestra = idOrchestra;
     }
 
+    @JsonIgnore
     public Procedural getProcedural() {
         return procedural;
     }
@@ -55,11 +60,11 @@ public class Operation {
         this.procedural = procedural;
     }
 
-    public String getParametres() {
-        return parametres;
+    public Map<String, String> getParams() {
+        return params;
     }
 
-    public void setParametres(String parametres) {
-        this.parametres = parametres;
+    public void setParams(Map<String, String> alias) {
+        this.params = alias;
     }
 }

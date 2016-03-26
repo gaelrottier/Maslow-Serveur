@@ -103,8 +103,8 @@ public class UtilisateurController {
         try {
             JSONObject json = new JSONObject(credentials);
 
-            String password = json.getString("password");
             String identifiant = json.getString("identifiant");
+            String password = json.getString("password");
 
             Utilisateur u = utilisateurDao.findByIdentifiantAndPassword(identifiant, password);
 
@@ -114,7 +114,6 @@ public class UtilisateurController {
             } else {
                 return new ResponseEntity<>("Echec de la connexion", HttpStatus.UNAUTHORIZED);
             }
-
         } catch (JSONException | NullPointerException e) {
             return new ResponseEntity<>("Les paramètres sont erronés", HttpStatus.BAD_REQUEST);
         }

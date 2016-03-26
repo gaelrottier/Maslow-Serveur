@@ -1,12 +1,10 @@
 package org.mbds.tpt.maslow;
 
 
+import org.mbds.tpt.maslow.dao.ProceduralDao;
 import org.mbds.tpt.maslow.dao.UtilisateurDao;
 import org.mbds.tpt.maslow.dao.WatchListDao;
-import org.mbds.tpt.maslow.entities.Appareil;
-import org.mbds.tpt.maslow.entities.Evenement;
-import org.mbds.tpt.maslow.entities.Utilisateur;
-import org.mbds.tpt.maslow.entities.WatchList;
+import org.mbds.tpt.maslow.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,6 +24,9 @@ public class Application {
     @Autowired
     private UtilisateurDao utilisateurDao;
 
+    @Autowired
+    private ProceduralDao proceduralDao;
+
     public static void main(String[] args) {
 
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
@@ -40,14 +41,17 @@ public class Application {
 
             admin.setPrenom("Admin");
             admin.setNom("Admin");
-            admin.generateToken();
+//            admin.generateToken();
+            admin.setToken("a");
             admin.setIdentifiant("admin");
-            admin.setPassword("admin");
+            admin.setPassword(Utilisateur.hashPassword("admin"));
 
             utilisateurDao.save(admin);
         }
 
-        if (!watchListDao.exists(1)) {
+        Utilisateur admin = utilisateurDao.findByIdentifiantAndPassword("admin", Utilisateur.hashPassword("admin"));
+
+        if (!watchListDao.exists(new WatchListPK(1, admin.getId()))) {
             ////////////////////
             // Création de la première Watchlist,
             //  correspondant à la vue ListeLumiereActivity
@@ -165,7 +169,7 @@ public class Application {
             Appareil prise = new Appareil();
             prise.setEvenements(evenementsPrise);
             prise.setNom("Prise électrique");
-            prise.setWatchlist(watchList1);
+            prise.getWatchlists().add(watchList1);
 
 
             ////////////////////
@@ -216,7 +220,7 @@ public class Application {
             Appareil eolienne = new Appareil();
             eolienne.setEvenements(evenementsEolienne);
             eolienne.setNom("Eolienne");
-            eolienne.setWatchlist(watchList1);
+            eolienne.getWatchlists().add(watchList1);
 
 
             ////////////////////
@@ -231,14 +235,32 @@ public class Application {
             // Mise en place de la watchlist
             ////////////////////
             watchList1.setAppareils(appareils);
-            watchList1.setId(1);
+            watchList1.setWatchListPK(new WatchListPK(1, admin.getId()));
 
+            admin.getWatchlists().add(watchList1);
             watchListDao.save(watchList1);
+            utilisateurDao.save(admin);
         }
 
-        if (!watchListDao.exists(2)) {
+//        if (!watchListDao.exists(new WatchListPK(1, 2))) {
+//        WatchList watchList2 = watchListDao.findOne(WatchListPK.createInstance(1, admin.getToken(), utilisateurDao));
+//
+//        if(watchList2 == null){
+//            watchList2.getAppareils().add()
+//        }
+////        }
 
-        }
 
+//        Procedural procedural = new Procedural(new ProceduralPK(1, 1));
+////        procedural.setUtilisateur(utilisateur);
+//        proceduralDao.save(procedural);
+//
+//        Procedural procedural2 = new Procedural(new ProceduralPK(2, 1));
+////        procedural.setUtilisateur(utilisateur);
+//        proceduralDao.save(procedural2);
+//
+//        Utilisateur utilisateur = utilisateurDao.findByIdentifiantAndPassword("admin", Utilisateur.hashPassword("admin"));
+//
+//        System.out.println("token : " + utilisateur.getToken());
     }
 }

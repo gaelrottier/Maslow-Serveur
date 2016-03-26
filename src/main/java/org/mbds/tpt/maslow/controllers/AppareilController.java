@@ -4,8 +4,8 @@ import org.mbds.tpt.maslow.dao.AppareilDao;
 import org.mbds.tpt.maslow.dao.UtilisateurDao;
 import org.mbds.tpt.maslow.dao.WatchListDao;
 import org.mbds.tpt.maslow.entities.Appareil;
-import org.mbds.tpt.maslow.entities.WatchList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * Created by Zac on 27/02/2016.
  */
 @RestController
-@RequestMapping(value = "/w/{idWatchList}/a")
+@RequestMapping(value = "/a")
 public class AppareilController {
 
     @Autowired
@@ -27,19 +27,16 @@ public class AppareilController {
     private WatchListDao watchListDao;
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ResponseEntity<?> addAppareil(@PathVariable int idWatchList, @RequestBody Appareil appareil,
-                                         @RequestParam String token) {
+    public ResponseEntity<?> createAppareil(@RequestBody Appareil appareil,
+                                            @RequestParam String token) {
         ResponseEntity<?> response;
 
         if (utilisateurDao.existsWithToken(token)) {
+            if (appareil.getId() == 0) {
 
-            WatchList watchList = watchListDao.findOne(idWatchList);
-
-            if (watchList != null) {
-                watchList.getAppareils().add(appareil);
-                response = new ResponseEntity<Object>(watchListDao.save(watchList), HttpStatus.CREATED);
+                response = new ResponseEntity<>(appareilDao.save(appareil), HttpStatus.CREATED);
             } else {
-                response = new ResponseEntity<Object>("WatchList " + idWatchList + " Introuvable ...", HttpStatus.NOT_FOUND);
+                response = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
         } else {
@@ -50,26 +47,22 @@ public class AppareilController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.PUT)
-    public ResponseEntity<?> majAppareil(@PathVariable int idWatchList, @RequestBody Appareil appareil,
-                                         @RequestParam String token) {
+    public ResponseEntity<?> updateAppareil(@RequestBody Appareil appareil, @RequestParam String token) {
+
         ResponseEntity<?> response;
+
         if (utilisateurDao.existsWithToken(token)) {
 
-            WatchList watchList = watchListDao.findOne(idWatchList);
-
-            if (watchList != null) {
-                int idAppareil = appareil.getId();
-                if (watchList.getAppareil(idAppareil) != null) {
-                    watchList.updateAppareil(appareil);
-                    response = new ResponseEntity<Object>(watchListDao.save(watchList), HttpStatus.OK);
-                    //dans la table evenement ==> duplication avec ancienne reference pointée a null ==> trouver moyen nettoyage
-                } else {
-                    response = new ResponseEntity<Object>("L'appreil " + idAppareil + " n'existe pas dans la WatchList " + idWatchList + "...", HttpStatus.NOT_FOUND);
+            if (appareil.getId() != 0) {
+                try {
+                    response = new ResponseEntity<>(appareilDao.save(appareil), HttpStatus.OK);
+                } catch (DataAccessException e) {
+                    response = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
                 }
-
             } else {
-                response = new ResponseEntity<Object>("WatchList " + idWatchList + " Introuvable ...", HttpStatus.NOT_FOUND);
+                response = new ResponseEntity<>("L'appareil n'existe pas...", HttpStatus.NOT_FOUND);
             }
+
 
         } else {
             response = new ResponseEntity<>("Le token est erroné", HttpStatus.UNAUTHORIZED);
@@ -79,44 +72,39 @@ public class AppareilController {
     }
 
     @RequestMapping(value = "/{idAppareil}/", method = RequestMethod.GET)
-    public ResponseEntity<?> getAppareil(@PathVariable int idWatchList, @PathVariable int idAppareil,
-                                         @RequestParam String token) {
+    public ResponseEntity<?> getAppareil(@PathVariable int idAppareil, @RequestParam String token) {
         ResponseEntity<?> response;
-        WatchList watchList;
+
         if (utilisateurDao.existsWithToken(token)) {
-            if ((watchList = watchListDao.findOne(idWatchList)) != null) {
-                if (watchList.getAppareil(idAppareil) != null) {
-                    response = new ResponseEntity<Object>(watchList.getAppareil(idAppareil), HttpStatus.OK);
-                } else {
-                    response = new ResponseEntity<Object>("L'appreil " + idAppareil + " n'existe pas dans la WatchList " + idWatchList + "...", HttpStatus.NOT_FOUND);
-                }
+
+            Appareil appareil = appareilDao.findOne(idAppareil);
+
+            if (appareil != null) {
+                response = new ResponseEntity<Object>(appareil, HttpStatus.OK);
             } else {
-                response = new ResponseEntity<Object>("WatchList " + idWatchList + " Introuvable ...", HttpStatus.NOT_FOUND);
+                response = new ResponseEntity<Object>("L'appareil " + idAppareil + " n'existe pas...", HttpStatus.NOT_FOUND);
             }
         } else {
             response = new ResponseEntity<>("Le token est erroné", HttpStatus.UNAUTHORIZED);
         }
+
         return response;
     }
 
     @RequestMapping(value = "/{idAppareil}/", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteAppareil(@PathVariable int idWatchList, @PathVariable int idAppareil, @RequestParam String token) {
+    public ResponseEntity<?> deleteAppareil(@PathVariable int idAppareil, @RequestParam String token) {
         ResponseEntity<?> response;
 
         if (utilisateurDao.existsWithToken(token)) {
 
-            WatchList watchList;
-
-            if ((watchList = watchListDao.findOne(idWatchList)) != null) {
-
-                watchList.deleteAppareil(idAppareil);
+            try {
                 appareilDao.delete(idAppareil);
-                watchListDao.save(watchList);
                 response = new ResponseEntity<>("Appareil supprimé", HttpStatus.OK);
 
-            } else {
-                response = new ResponseEntity<>("WatchList introuvable...", HttpStatus.NOT_FOUND);
+            } catch (Exception e) {
+                response = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
+
         } else {
             response = new ResponseEntity<Object>("Le token est erroné", HttpStatus.UNAUTHORIZED);
         }

@@ -1,22 +1,26 @@
 package org.mbds.tpt.maslow.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * Created by Gael on 17/02/2016.
  */
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Utilisateur {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id_utilisateur")
     private int id;
 
     @NotNull
@@ -33,7 +37,29 @@ public class Utilisateur {
 
     private String token;
 
+    public List<Procedural> getProcedurals() {
+        return procedurals;
+    }
+
+    public void setProcedurals(List<Procedural> procedurals) {
+        this.procedurals = procedurals;
+    }
+
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<WatchList> watchlists;
+
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Procedural> procedurals;
+
     public Utilisateur() {
+    }
+
+    public List<WatchList> getWatchlists() {
+        return watchlists;
+    }
+
+    public void setWatchlists(List<WatchList> watchLists) {
+        this.watchlists = watchLists;
     }
 
     //immutable universally unique identifier
@@ -86,16 +112,25 @@ public class Utilisateur {
     }
 
     public static String hashPassword(String password) {
-        byte[] hashedPassword = null;
+        String hashedPassword = "";
 
         try {
-            hashedPassword = MessageDigest.getInstance("md5").digest(password.getBytes());
-        } catch (NoSuchAlgorithmException ex) {
-            // Unlikely to happen
-            System.out.println("MD5 n'est pas présent sur le système");
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
+            digest.update(password.getBytes("UTF-8"));
+            byte messageDigest[] = digest.digest();
+
+            // Create Hex String
+            StringBuffer hexString = new StringBuffer();
+            for (int i = 0; i < messageDigest.length; i++)
+                hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+            hashedPassword = hexString.toString();
+
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
 
-        return new String(hashedPassword);
+        return hashedPassword;
     }
 
     public String getToken() {

@@ -33,7 +33,7 @@ public class OperationController {
 
         ResponseEntity<?> response;
 
-        if (utilisateurDao.existsWithToken(token)) {
+        if (utilisateurDao.existsWithIdAndToken(idUtilisateur, token) || utilisateurDao.isAdmin(token)) {
 
             Procedural p = proceduralDao.findOne(new ProceduralPK(idUtilisateur, idProcedural));
 
@@ -52,7 +52,7 @@ public class OperationController {
                                            @PathVariable int idOperation, @RequestParam String token) {
         ResponseEntity<?> response;
 
-        if (utilisateurDao.existsWithToken(token)) {
+        if (utilisateurDao.existsWithIdAndToken(idUtilisateur, token) || utilisateurDao.isAdmin(token)) {
 
             Operation o = proceduralDao.findOne(new ProceduralPK(idUtilisateur, idProcedural)).getOperation(idOperation);
             if (o == null) {
@@ -73,7 +73,7 @@ public class OperationController {
                                              @RequestBody Operation operation, @RequestParam String token) {
         ResponseEntity<?> response;
 
-        if (utilisateurDao.existsWithToken(token)) {
+        if (utilisateurDao.existsWithIdAndToken(idUtilisateur, token) || utilisateurDao.isAdmin(token)) {
 
             int idOperation = operation.getId();
             Procedural p = proceduralDao.findOne(new ProceduralPK(idUtilisateur, idProcedural));
@@ -103,9 +103,9 @@ public class OperationController {
             if (p.getOperation(idOperation) == null) {
                 response = new ResponseEntity<>("L'opération n'existe pas pour la procédure demandée", HttpStatus.NOT_FOUND);
             } else {
-                operationDao.delete(idOperation);
+                p.deleteOperation(idOperation);
 
-                response = new ResponseEntity<>("Opération supprimée", HttpStatus.OK);
+                response = new ResponseEntity<>(proceduralDao.save(p), HttpStatus.OK);
             }
         } else {
             response = new ResponseEntity<>("Le token est erroné", HttpStatus.UNAUTHORIZED);

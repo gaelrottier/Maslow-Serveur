@@ -1,6 +1,8 @@
 package org.mbds.tpt.maslow.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.util.Map;
@@ -9,6 +11,7 @@ import java.util.Map;
  * Created by Gael on 17/02/2016.
  */
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Evenement {
 
     @Id
@@ -16,9 +19,8 @@ public class Evenement {
     private int id;
 
     private String idOrchestra;
-    //
+
     @ManyToOne
-    @JsonBackReference
     Appareil appareil;
 
     //Permet de faire la correspondance entre
@@ -27,7 +29,7 @@ public class Evenement {
     @ElementCollection
     private Map<String, String> alias;
 
-
+    @JsonIgnore
     public Appareil getAppareil() {
         return appareil;
     }

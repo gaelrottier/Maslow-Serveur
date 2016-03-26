@@ -1,6 +1,7 @@
 package org.mbds.tpt.maslow.dao;
 
 import org.mbds.tpt.maslow.entities.WatchList;
+import org.mbds.tpt.maslow.entities.WatchListPK;
 import org.springframework.data.repository.CrudRepository;
 
 import javax.transaction.Transactional;
@@ -10,5 +11,5 @@ import javax.transaction.Transactional;
  */
 @Transactional
 @org.springframework.stereotype.Repository
-public interface WatchListDao extends CrudRepository<WatchList, Integer> {
+public interface WatchListDao extends CrudRepository<WatchList, WatchListPK> {
 }
