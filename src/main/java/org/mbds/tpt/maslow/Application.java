@@ -1,6 +1,7 @@
 package org.mbds.tpt.maslow;
 
 
+import org.mbds.tpt.maslow.dao.AppareilDao;
 import org.mbds.tpt.maslow.dao.ProceduralDao;
 import org.mbds.tpt.maslow.dao.UtilisateurDao;
 import org.mbds.tpt.maslow.dao.WatchListDao;
@@ -23,6 +24,9 @@ public class Application {
 
     @Autowired
     private UtilisateurDao utilisateurDao;
+
+    @Autowired
+    private AppareilDao appareilDao;
 
     @Autowired
     private ProceduralDao proceduralDao;
@@ -59,31 +63,31 @@ public class Application {
 
             WatchList watchList1 = new WatchList();
 
-//        List<Evenement> evenementsArduino = new ArrayList<>();
-//
-//        Evenement evenementArduinoOn = new Evenement();
-//        evenementArduinoOn.setIdOrchestra("aWGnLYQKqBnpsxJwm");
-//
-//        Map<String, String> aliasArduinoOn = new HashMap<>();
-//        aliasArduinoOn.put("nom", "on");
-//        aliasArduinoOn.put("nomOrchestra", "switchOn");
-//        evenementArduinoOn.setAlias(aliasArduinoOn);
-//
-//        Evenement evenementArduinoOff = new Evenement();
-//        evenementArduinoOff.setIdOrchestra("AaMyshZoJyn9Ng33D");
-//
-//        Map<String, String> aliasArduinoOff = new HashMap<>();
-//        aliasArduinoOff.put("nom", "off");
-//        aliasArduinoOff.put("nomOrchestra", "switchOff");
-//        evenementArduinoOff.setAlias(aliasArduinoOff);
-//
-//        evenementsArduino.add(evenementArduinoOn);
-//        evenementsArduino.add(evenementArduinoOff);
-//
-//        Appareil arduino = new Appareil();
-//        arduino.setEvenements(evenementsArduino);
-//        arduino.setNom("Arduino");
-//        arduino.setWatchlist(watchList1);
+            List<Evenement> evenementsArduino = new ArrayList<>();
+
+            Evenement evenementArduinoOn = new Evenement();
+            evenementArduinoOn.setIdOrchestra("aWGnLYQKqBnpsxJwm");
+
+            Map<String, String> aliasArduinoOn = new HashMap<>();
+            aliasArduinoOn.put("nom", "on");
+            aliasArduinoOn.put("nomOrchestra", "switchOn");
+            evenementArduinoOn.setAlias(aliasArduinoOn);
+
+            Evenement evenementArduinoOff = new Evenement();
+            evenementArduinoOff.setIdOrchestra("AaMyshZoJyn9Ng33D");
+
+            Map<String, String> aliasArduinoOff = new HashMap<>();
+            aliasArduinoOff.put("nom", "off");
+            aliasArduinoOff.put("nomOrchestra", "switchOff");
+            evenementArduinoOff.setAlias(aliasArduinoOff);
+
+            evenementsArduino.add(evenementArduinoOn);
+            evenementsArduino.add(evenementArduinoOff);
+
+            Appareil arduino = new Appareil();
+            arduino.setEvenements(evenementsArduino);
+            arduino.setNom("Arduino");
+            arduino.getWatchlists().add(watchList1);
 
             ////////////////////
             // Création des évènements de la prise connectée
@@ -231,6 +235,7 @@ public class Application {
             appareils.add(prise);
             appareils.add(eolienne);
 
+
             ////////////////////
             // Mise en place de la watchlist
             ////////////////////
@@ -238,6 +243,8 @@ public class Application {
             watchList1.setWatchListPK(new WatchListPK(1, admin.getId()));
 
             admin.getWatchlists().add(watchList1);
+            appareilDao.save(arduino);
+            appareilDao.save(appareils);
             watchListDao.save(watchList1);
             utilisateurDao.save(admin);
         }

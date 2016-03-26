@@ -111,4 +111,28 @@ public class AppareilController {
 
         return response;
     }
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ResponseEntity<?> getAppareils(@RequestParam String token) {
+        ResponseEntity<?> response;
+
+        if (utilisateurDao.existsWithToken(token)) {
+
+            Iterable<Appareil> appareils = appareilDao.findAll();
+
+            if (appareils != null) {
+                try {
+                    response = new ResponseEntity<>(appareils, HttpStatus.OK);
+                } catch (Exception e) {
+                    response = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            } else {
+                response = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } else {
+            response = new ResponseEntity<>("Le token est erroné", HttpStatus.UNAUTHORIZED);
+        }
+
+        return response;
+    }
 }
