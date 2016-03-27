@@ -118,4 +118,22 @@ public class UtilisateurController {
             return new ResponseEntity<>("Les paramètres sont erronés", HttpStatus.BAD_REQUEST);
         }
     }
+
+    @RequestMapping(value = "/{id}/", method = RequestMethod.DELETE)
+    public void deleteUtilisateur(@PathVariable("id") int id, @RequestParam String token) throws IllegalAccessException {
+        try {
+
+            if (utilisateurDao.existsWithToken(token)) {
+                utilisateurDao.delete(id);
+
+            } else {
+                throw new IllegalAccessException("Le token est erroné");
+            }
+
+        } catch (NullPointerException e) {
+            throw new NullPointerException("L'utilisateur demandé n'existe pas.");
+        } catch (IllegalAccessException e) {
+            throw new IllegalAccessException("Le token est erroné");
+        }
+    }
 }
