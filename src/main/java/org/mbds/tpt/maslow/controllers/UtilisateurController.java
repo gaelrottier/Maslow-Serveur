@@ -110,6 +110,8 @@ public class UtilisateurController {
 
             if (u != null) {
                 u.setPassword("");
+                u.setWatchlists(null);
+                u.setProcedurals(null);
                 return new ResponseEntity<>(u, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Echec de la connexion", HttpStatus.UNAUTHORIZED);

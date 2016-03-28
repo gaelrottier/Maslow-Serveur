@@ -94,7 +94,7 @@ public class WatchListController {
 
         try {
             if (utilisateurDao.existsWithIdAndToken(idUtilisateur, token) || utilisateurDao.isAdmin(token)) {
-                WatchList watchList = watchListDao.findOne(WatchListPK.createInstance(idWatchlist, token, utilisateurDao));
+                WatchList watchList = watchListDao.findOne(new WatchListPK(idWatchlist, idUtilisateur));
                 if (watchList == null) {
                     response = new ResponseEntity<>("La WatchList demandée n'existe pas.", HttpStatus.NOT_FOUND);
 
@@ -119,7 +119,7 @@ public class WatchListController {
         try {
 
             if (utilisateurDao.existsWithIdAndToken(idUtilisateur, token) || utilisateurDao.isAdmin(token)) {
-                watchListDao.delete(WatchListPK.createInstance(idWatchlist, token, utilisateurDao));
+                watchListDao.delete(new WatchListPK(idWatchlist, idUtilisateur));
                 response = new ResponseEntity<>("Watchlist supprimée", HttpStatus.OK);
 
 
@@ -141,7 +141,7 @@ public class WatchListController {
 
         if (utilisateurDao.existsWithIdAndToken(idUtilisateur, token) || utilisateurDao.isAdmin(token)) {
 
-            WatchList watchList = watchListDao.findOne(WatchListPK.createInstance(idWatchlist, token, utilisateurDao));
+            WatchList watchList = watchListDao.findOne(new WatchListPK(idWatchlist, idUtilisateur));
 
             Appareil appareil = appareilDao.findOne(idAppareil);
 
@@ -166,7 +166,7 @@ public class WatchListController {
 
         if (utilisateurDao.existsWithIdAndToken(idUtilisateur, token) || utilisateurDao.isAdmin(token)) {
 
-            WatchList watchList = watchListDao.findOne(WatchListPK.createInstance(idWatchlist, token, utilisateurDao));
+            WatchList watchList = watchListDao.findOne(new WatchListPK(idWatchlist, idUtilisateur));
 
             if (watchList != null && watchList.deleteAppareil(idAppareil)) {
                 response = new ResponseEntity<>(watchListDao.save(watchList), HttpStatus.OK);

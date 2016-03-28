@@ -2,7 +2,6 @@ package org.mbds.tpt.maslow.controllers;
 
 import org.mbds.tpt.maslow.dao.AppareilDao;
 import org.mbds.tpt.maslow.dao.UtilisateurDao;
-import org.mbds.tpt.maslow.dao.WatchListDao;
 import org.mbds.tpt.maslow.entities.Appareil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -22,9 +21,6 @@ public class AppareilController {
 
     @Autowired
     private UtilisateurDao utilisateurDao;
-
-    @Autowired
-    private WatchListDao watchListDao;
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseEntity<?> createAppareil(@RequestBody Appareil appareil,

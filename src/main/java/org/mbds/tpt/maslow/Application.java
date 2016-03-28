@@ -157,6 +157,18 @@ public class Application {
             aliasPriseOff2.put("valeur", "0");
             evenementPriseOff2.setAlias(aliasPriseOff2);
 
+            ////////////////////
+            // Conso del a prise
+            ////////////////////
+            Evenement evenementConsoPrise = new Evenement();
+            evenementConsoPrise.setIdOrchestra("6DXJvDjpbxjYeDwJT");
+
+            ////////////////////
+            // Alias
+            ////////////////////
+            Map<String, String> aliasConsoPrise = new HashMap<>();
+            aliasConsoPrise.put("nom", "conso");
+            evenementPriseOff2.setAlias(aliasConsoPrise);
 
             ////////////////////
             // Ajout des évènements à la liste des évènements
@@ -166,6 +178,7 @@ public class Application {
             evenementsPrise.add(evenementPriseOff);
             evenementsPrise.add(evenementPriseOn2);
             evenementsPrise.add(evenementPriseOff2);
+            evenementsPrise.add(evenementConsoPrise);
 
             ////////////////////
             // Création de la prise
